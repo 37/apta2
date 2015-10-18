@@ -116,7 +116,7 @@ int run_menu( struct menu_item options[]) {
 				printf("%d|\t%s\n", (index + 1), options[index].name);
 
 				if(index == 2) {
-						printf("\n%s\n" "Administrator options:");
+						printf("\n%s\n", "Administrator options:");
 				}
 
 		}
