@@ -106,26 +106,26 @@ switch(i)
 
 }
 
-int run_menu( struct menu_item menu[])
-{
-int i = 0, j = 0, k = 0;
+int run_menu( struct menu_item options[]) {
+		int index = 0, k = 0;
+		// clear console  and print menu
+		printf("\e[1;1H\e[2J%s\n", "Vending Machine Menu:");
 
-printf("Main Menu:\n");
-for( i = 0, j = 1; i < NUM_OF_MENUITEMS; i++, j++)
-{
-	if( j == 4)
-	{
-	printf("Administrator-Only Menu:\n");
-	}
+		for( index = 0; index < NUM_OF_MENUITEMS; index++) {
 
-printf("\t %d. %s \n",j,menu[i].name);
+				printf("%d|\t%s\n", (index + 1), options[index].name);
 
-}
-printf("Select your option (1-9):");
+				if(index == 2) {
+						printf("\n%s\n" "Administrator options:");
+				}
 
-getInteger(&k, 1, "", 1, 9);
+		}
 
-return k - 1;
+		printf("\n%s\n", "What action would you like to take? (1-9) :");
+
+		getInteger(&k, 1, "", 1, 9);
+
+		return k - 1;
 
 
 }

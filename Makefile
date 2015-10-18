@@ -27,7 +27,7 @@ archive:
 
 all:
 	gcc -ansi -pedantic -Wall -c $(SOURCES)
-	gcc -ansi -pedantic -Wall -lm -o machine $(OBJECTS)
+	gcc -ansi -pedantic -Wall -lm -o ppd $(OBJECTS)
 
 clean:
 	rm *.o *.exe

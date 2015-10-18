@@ -10,43 +10,36 @@
  ***********************************************************************/
 
 #include "ppd_main.h"
-
-
-
-
-
-
 #include "ppd_options.h"
 #include "ppd_utility.h"
-
-
-
-
-
 
 /**
  * @file ppd_menu.h defines the @ref menu_item type and the init_menu
  * function which you need to call to initialise it
  **/
+
 #ifndef MENU_H
 #define MENU_H
+
 /**
  * The maximum length of a menu item's text
  **/
+
 #define MENU_NAME_LEN 50
 
 /**
  * represents a menu item to be displayed and executed in the program
  **/
-typedef struct menu_item
-{
+
+typedef struct menu_item {
     /**
-     * the text to be displayed in the menu
-     **/
+    * the text to be displayed in the menu
+    **/
     char name[MENU_NAME_LEN + 1];
+
     /**
-     * pointer to the function to be called when this item is selected
-     **/
+    * pointer to the function to be called when this item is selected
+    **/
     BOOLEAN (*function)(struct ppd_system*);
 } menu_item;
 
@@ -64,6 +57,7 @@ typedef struct menu_item
  * means initialization in a loop. A typedef might assist in making this
  * code more readable.
  **/
+ 
 void init_menu( struct menu_item*);
 
 int run_menu( struct menu_item[]);
