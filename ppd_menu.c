@@ -108,7 +108,7 @@ switch(i)
 
 int run_menu( struct menu_item options[]) {
 		int index = 0, k = 0;
-		// clear console  and print menu
+		/* clear console  and print menu */
 		printf("\e[1;1H\e[2J%s\n", "Vending Machine Menu:");
 
 		for( index = 0; index < NUM_OF_MENUITEMS; index++) {
