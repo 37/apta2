@@ -21,7 +21,7 @@
  * manage the stock list. You should add here the function prototypes for
  * managing the list here and implement them in ppd_stock.c
  **/
-IDLEN NAMELEN DESCLEN PRICELEN ONHANDLEN
+
 /**
  * The max length of the the onhand string in stock datafiles
  **/

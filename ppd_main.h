@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "ppd_stock.h"
 #include "ppd_coin.h"
+#include "menu.h"
 #ifndef PPD_MAIN
 #define PPD_MAIN
 #define MENU_SIZE 9;

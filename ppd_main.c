@@ -41,6 +41,7 @@ int main(int argc, char **argv)
     /* represents the data structures to manage the system */
     struct ppd_system system;
     int selection = 0;
+    BOOLEAN option = FALSE;
 
     /* init the system */
     system.stock_file_name = argv[1];
@@ -60,7 +61,7 @@ int main(int argc, char **argv)
     printf("%s%d%s", "Option ", selection, " has been selected.");
 
     /* run each option selected */
-    finished = menu[selection].function( &system );
+    option = menu[selection].function( &system );
 
     /* until the user quits */
 
