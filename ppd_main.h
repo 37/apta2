@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.>
 #include "ppd_stock.h"
 #include "ppd_coin.h"
 #include "menu.h"
