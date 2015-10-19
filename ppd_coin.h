@@ -16,8 +16,8 @@
  **/
 #ifndef PPD_COIN
 #define PPD_COIN
+#define COINLEN  10
 #define COIN_DELIM ","
-#define MAX_COINLEN 10
 struct ppd_system;
 /**
  * enumeration representing the various types of currency available in

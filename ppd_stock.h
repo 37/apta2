@@ -21,15 +21,21 @@
  * manage the stock list. You should add here the function prototypes for
  * managing the list here and implement them in ppd_stock.c
  **/
+IDLEN NAMELEN DESCLEN PRICELEN ONHANDLEN
+/**
+ * The max length of the the onhand string in stock datafiles
+ **/
+#define ONHANDLEN 2
+
+/**
+ * The max length of the the price string in stock datafiles
+ **/
+#define PRICELEN 5
 
 /**
  * The length of the id string not counting the nul terminator
  **/
 #define IDLEN 5
-
-#define MAX_ON_HAND_LEN 2
-
-#define MAX_PRICE_LEN 5
 
 /**
  * The maximum length of a product name not counting the nul terminator
@@ -58,12 +64,10 @@
  **/
 #define NUM_DENOMS 8
 
-
-
-/* added for stock tokens*/
-#define STOCK_DELIM "|"
-
-
+/**
+ * The maximum line length on stock data files
+ **/
+#define LINECHARS 308
 
 /**
  * a structure to represent a price. One of the problems with the floating
@@ -118,7 +122,9 @@ struct ppd_stock
  **/
 struct ppd_node
 {
+    /* pointer to the data held for the node */
     struct ppd_stock * data;
+    /* pointer to the next node in the list */
     struct ppd_node * next;
 };
 
@@ -164,6 +170,23 @@ struct ppd_system
      **/
     const char * stock_file_name;
 };
+
+/**
+ * this is the item index structure for all the product data
+ * passed for product initialization
+ **/
+typedef enum ppd_item_attr {
+  	id = 0,
+
+  	title = 1,
+
+  	description = 2,
+
+  	price = 3,
+
+  	onHand = 4
+} item_attr;
+
 
 
 #endif

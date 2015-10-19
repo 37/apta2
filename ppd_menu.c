@@ -10,8 +10,6 @@
  ***********************************************************************/
 
 #include "ppd_menu.h"
-
-
 /**
  * @file ppd_menu.c handles the initialised and management of the menu
  * array
@@ -20,112 +18,89 @@
 /**
  * @param menu the menu item array to initialise
  **/
-/* void init_menu( struct menu_item* menu, int i) */
-void init_menu( struct menu_item* menu)
-{
-int i = 0;
-char * menuItemNames[NUM_OF_MENUITEMS] = {
+void init_menu( struct menu_item * menu) {
 
-"Display Items",
-"Purchase Items",
-"Save and Exit",
-"Add Item",
-"Remove Item",
-"Display Coins",
-"Reset Stock",
-"Reset Coins",
-"Abort Program"
+    int item = 0;
+    char * menuLabels[MENU_SIZE] = {
+        "Display Items",
+        "Purchase Items",
+        "Save and Exit",
+        "Add Item",
+        "Remove Item",
+        "Display Coins",
+        "Reset Stock",
+        "Reset Coins",
+        "Abort Program"
+    };
 
-};
+    BOOLEAN ( * function[MENU_SIZE] )( struct ppd_system * ) = {
+        display_items,
+        purchase_item,
+        save_system,
+        add_item,
+        remove_item,
+        display_coins,
+        reset_stock,
+        reset_coins,
+        abort_program
+    };
 
-BOOLEAN (*function[NUM_OF_MENUITEMS])(struct ppd_system*) = {
-
-display_items,
-purchase_item,
-save_system,
-add_item,
-remove_item,
-display_coins,
-reset_stock,
-reset_coins,
-abort_program
-
-};
-
-for(i = 0;i < NUM_OF_MENUITEMS; i++)
-{
-	strcpy(menu[i].name,menuItemNames[i]);
-
-	menu[i].function = function[i];
+    for(item = 0; item < MENU_SIZE; i++) {
+    	strcpy(menu[item].name, menuLabels[item]);
+    	menu[item].function = function[i];
+    }
 }
 
+int display_menu( struct menu_item menu[]) {
+	int index = 0,
+        selection = 0,
+        optionLength = 3,
+        optionMin = 1,
+        optionMax = 9,
+        inputLength,
+        convertedInput;
 
-/*
-switch(i)
-{
-	case 0 :
-	strcpy(menu->name,"Display Items");
-	menu->function = display_items;
-	break;
-	case 1 :
-	strcpy(menu->name,"Purchase Items");
-	menu->function = purchase_item;
-	break;
-	case 2 :
-	strcpy(menu->name,"Save and Exit");
-	menu->function = save_system;
-	break;
-	case 3 :
-	strcpy(menu->name,"Add Item");
-	menu->function = add_item;
-	break;
-	case 4 :
-	strcpy(menu->name,"Remove Item");
-	menu->function = remove_item;
-	break;
-	case 5 :
-	strcpy(menu->name,"Display Coins");
-	menu->function = display_coins;
-	break;
-	case 6 :
-	strcpy(menu->name,"Reset Stock");
-	menu->function = reset_stock;
-	break;
-	case 7 :
-	strcpy(menu->name,"Reset Coins");
-	menu->function = reset_coins;
-	break;
-	case 8 :
-	strcpy(menu->name,"Abort Program");
-	menu->function = abort_program;
-	break;
+    char inputString[MAXINT + 2];
+    char * end;
 
-}
-*/
+    while (!selection || selection == 0) {
+        /* display the menu */
+        printf("%s\n%s\n%s\n",
+            "______________________________",
+            "Vending Machine Menu:",
+            "______________________________"
+        );
 
+    	for( index = 0; index < NUM_OF_MENUITEMS; index++) {
 
-}
+    		printf("%d|\t%s\n", (index + 1), menu[index].name);
 
-int run_menu( struct menu_item options[]) {
-		int index = 0, k = 0;
-		/* clear console  and print menu */
-		printf("\e[1;1H\e[2J%s\n", "Vending Machine Menu:");
+    		if(index == 2) {
+    				printf("\n%s\n", "Administrator options:");
+    		}
 
-		for( index = 0; index < NUM_OF_MENUITEMS; index++) {
+    	}
 
-				printf("%d|\t%s\n", (index + 1), options[index].name);
+    	printf("\n%s\n", "What action would you like to take? (1-9) :");
 
-				if(index == 2) {
-						printf("\n%s\n", "Administrator options:");
-				}
+        /* collect user input and validate */
+        fgets(inputString, optionLength, stdin);
 
-		}
+        inputLength = strlen(inputString) - 1;
+        if (inputString[inputLength] == '\n'){
+            inputString[inputLength] = '\0';
+        }
 
-		printf("\n%s\n", "What action would you like to take? (1-9) :");
+        /* convert string input to integer and validate */
+        convertedInput = (int) strtol(inputString, &end, 10);
 
-		getInteger(&k, 1, "", 1, 9);
+        if (!convertedInput || convertedInput < optionMin || convertedInput > optionMax) {
+            printf("Error! This is not a valid selection.");
+        } else {
+            selection = convertedInput;
+        }
+    }
 
-		return k - 1;
-
+	return selection;
 
 }

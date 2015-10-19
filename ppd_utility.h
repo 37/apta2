@@ -28,8 +28,6 @@
  **/
 void read_rest_of_line(void);
 
-
-#define MAXINT 10
 /**
  * function which is called to load the coin and stock data into the
  * system. You should ideally break this function up into smaller parts
@@ -63,24 +61,4 @@ BOOLEAN system_init(struct ppd_system *);
  * memory addresses.
  **/
 void system_free(struct ppd_system *);
-
-BOOLEAN getInteger(int* , unsigned , char* , int , int );
-
-BOOLEAN readStringInput(char theString[], int sizeLimit, char *message, char *errorMessage);
-
-void system_sort(struct ppd_system * system);
-
-
-
-typedef enum stock_detail
-{
-	ID = 0,
-	NAME = 1,
-	DESC = 2,
-	PRICE = 3,
-	ON_HAND = 4
-} stock_detail;
-
-
-
 #endif

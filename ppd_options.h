@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #include "ppd_main.h"
-#include "ppd_utility.h"
 
 /**
  * @file ppd_options.h declares all functions to implement the menu
@@ -169,7 +168,3 @@ BOOLEAN reset_coins(struct ppd_system *);
  *        10 dollar       |    3
  **/
 BOOLEAN display_coins(struct ppd_system *);
-
-BOOLEAN abort_program(struct ppd_system *);
-
-void refund(struct coin tempcash_register[]);

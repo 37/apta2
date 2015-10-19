@@ -13,13 +13,10 @@
 #include <stdlib.h>
 #include "ppd_stock.h"
 #include "ppd_coin.h"
-
-/* for implementation of rounding and other math functions */
-#include <math.h>
-
 #ifndef PPD_MAIN
 #define PPD_MAIN
-#define NUM_OF_MENUITEMS 9
+#define MENU_SIZE 9;
+
 /**
  * @file ppd_main.h this file holds the rest of the application together.
  * From these header files, main() can call all functions refered to
@@ -41,5 +38,6 @@ typedef enum truefalse
      **/
     TRUE
 } BOOLEAN;
+
 
 #endif

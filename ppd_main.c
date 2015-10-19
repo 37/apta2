@@ -24,67 +24,44 @@
  * data and handles the processing of options. The bulk of this function
  * should simply be calling other functions to get the job done.
  **/
-int main(int argc, char **argv) {
-  /* represents the data structures to manage the system */
-  struct ppd_system system;
-	int selection = 0;
-	menu_item menu[NUM_OF_MENUITEMS];
-	BOOLEAN finished = FALSE;
+int main(int argc, char **argv)
+{
 
-	/* validate command line arguments */
-
-
-
-	/* SHOULD I USE A DEFINED CONSTANT INSTAED OF 3? */
-	if(argc != 3) {
-		printf("%s\n", "Error; invalid arguments");
-    return EXIT_FAILURE;
+    /* validate command line arguments */
+    if(argc != 3) {
+		printf("%s\n", "Oops! Your command line arguments are incorrect.");
+        return EXIT_FAILURE;
 	}
 
 	if(strcmp(argv[1], "stock.dat") != 0 && strcmp(argv[2], "coins.dat") != 0) {
-		printf("Error; misspelled arguments or incorrect order, aka should be *.exe stock.dat coins.dat \n");
+		printf("Oops! Please check your command line arguments: eg ./ppd *items*.dat *funds*.dat \n");
 		return EXIT_FAILURE;
 	}
 
-  /* init the system */
+    /* represents the data structures to manage the system */
+    struct ppd_system system;
+    int selection = 0;
 
+    /* init the system */
+    system.stock_file_name = argv[1];
+    system.coin_file_name = argv[2];
+    system_init(&system);
+    printf("System initialised. Please wait.");
 
-	/* should be here ? */
-	system.stock_file_name = argv[1];
-
-	system.coin_file_name = argv[2];
-
-	system_init(&system);
-
-   /* load data */
-	 load_data(&system ,system.coin_file_name ,system.stock_file_name);
-
-	/* test if everything has been initialised correctly */
-
-	/* printf("\n\n\n%s\n", system.item_list->head->next->next->data->name); */
-
+    /* load data from .dat files */
+    load_data(&system, system.coin_file_name, system.stock_file_name);
 
     /* initialise the menu system */
-	/*for (i = 0; i < NUM_OF_MENUITEMS; i++)
-	{
-	init_menu(&menu[i],i);
-
-	}
-	*/
-
-	init_menu(menu);
-
-
-	while (!finished)
-	{
+    menu_item menu[MENU_SIZE];
+    init_menu(menu);
 
     /* loop, asking for options from the menu */
-	selection = run_menu(menu);
+    selection = display_menu(menu);
+    printf("%s%d%s", "Option ", selection, " has been selected.");
+
     /* run each option selected */
+    finished = menu[selection].function( &system );
 
-	finished = menu[selection].function(&system);
-
-	}
     /* until the user quits */
 
     /* make sure you always free all memory and close all files

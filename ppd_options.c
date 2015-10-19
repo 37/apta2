@@ -26,26 +26,42 @@
  * all the information for managing the system.
  * @return true as this particular function should never fail.
  **/
-BOOLEAN display_items(struct ppd_system * system)
-{
-    struct ppd_node * ptr = system->item_list->head;
-	int i = 0;
-	double price = 0.0;
+BOOLEAN display_items(struct ppd_system * system) {
 
-	printf("\n\nDisplay Items\n\n");
+    struct ppd_node * current = system->item_list->head;
+    double price = 0.0;
+    int item = 0;
 
-	printf("Items Menu");
-	printf("\n­­­­­­­­­­\n");
-	printf("%-6s|%-20s|%-10s|%-21s\n","ID","Name","Available","Price");
-	printf("­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­\n");
-	for(i = 0; i < system->item_list->count; i++)
-	{
-	price = (double)((ptr->data->price.dollars * 100) + (double)(ptr->data->price.cents)) / 100;
-	printf("%-6s|%-20s|%-10d|$ %-21.2f\n",ptr->data->id,ptr->data->name,ptr->data->on_hand,price);
-	ptr = ptr->next;
-	}
-	printf("\n");
-    return FALSE;
+  	printf("\e[1;1H\e[2J\n%s\n%s\n%s\n",
+        "Display Items: ",
+        "Items Menu",
+        "----------"
+    );
+
+  	printf("%-6s\t|%-20s\t|%-10s\t|%-21s\n%s\n",
+        "ID",
+        "Name",
+        "Available",
+        "Price",
+        "----------------------------------------"
+    );
+
+  	for(item = 0; item < system->item_list->count; item++) {
+        /* calculate double value of item price */
+      	price = (double)((current->data->price.dollars * 100) + (double)(current->data->price.cents)) / 100;
+        /* print product in table format */
+      	printf("%-6s\t|%-20s\t|%-10d\t|$ %-21.2f\n",
+            current->data->id,
+            current->data->name,
+            current->data->on_hand,
+            price
+        );
+        /* iterate to the next item in list */
+      	current = current->next;
+  	}
+
+  	printf("\n");
+    return TRUE;
 }
 
 /**
@@ -55,251 +71,234 @@ BOOLEAN display_items(struct ppd_system * system)
  **/
 BOOLEAN purchase_item(struct ppd_system * system)
 {
-    struct ppd_node * ptr = system->item_list->head;
-	BOOLEAN valid = FALSE;
-	char input[IDLEN + 1];
-	double price = 0.0;
-	int inputmoney = 0,i = 0,changecheck = 0,totalmoney = 0;
 
-	struct coin tempcash_register[NUM_DENOMS];
+    /* Load variables and prepare the system for purchase */
+  	BOOLEAN valid = FALSE;
+    struct ppd_node * current = system->item_list->head;
+  	struct coin change_system[NUM_DENOMS];
 
-		for(i = 0; i < NUM_DENOMS; i++)
-	{
-		tempcash_register[i].denom = i;
+  	int denomination = 0,
+        item = 0,
+        inserted = 0,
+        cashOnHand = 0,
+        totalMoney = 0;
 
-		tempcash_register[i].count = 0;
-	}
+  	char selection[IDLEN + 1];
+  	double itemPrice = 0.0;
 
+    /* initialise change system */
+	for(denomination = 0; denomination < NUM_DENOMS; denomination++) {
+		change_system[denomination].denom = denomination;
+		change_system[denomination].count = 0;
+  	}
 
+    /* Print out the purchase menu and options */
+  	printf("\n%s\n­­­­­­­­­­", "You have chosen to purchase an item.");
 
+  	while (!valid) {
+        if (takeUserInput( selection, (IDLEN + 1), "Select an item by ID: ", "Oops! Invalid input." ) == FALSE) {
+            return FALSE;
+      	}
 
+        for (item = 0; i < system->item_list->count; item++) {
+            /* check item_list for match */
+            if ( strcmp(current->data->id, selection) == 0) {
+      	       break;
+            }
+            current = current->next;
+        }
 
-	printf("\n\nPurchase Items");
-    printf("\n­­­­­­­­­­\n");
+      	if (item == system->item_list->count) {
+    		current = system->item_list->head;
+    		printf("\n%s\n", "That is an invalid ID! Try again.");
+    		continue;
+      	}
 
-	do
-	{
+      	if(current->data->on_hand == 0) {
+    		current = system->item_list->head;
+    		printf("\n%s\n", "Sorry! That item is out of stock. Pick another?");
+    		continue;
+      	}
 
-	 if(readStringInput(input,IDLEN + 1, "Please enter the id of the item you wish to purchase:", "Error; invalid input") == FALSE)
-	 {
-		 return FALSE;
-	 }
+      	valid = TRUE;
+  	}
 
-	 for (i = 0; i < system->item_list->count; i++)
-	 {
-		 if ( strcmp(ptr->data->id,input) == 0)
-		 {
-			 break;
-		 }
-		 ptr = ptr->next;
-	 }
+  	itemPrice = (double)((current->data->price.dollars * 100) + (double)(current->data->price.cents)) / 100;
 
-	if (i == system->item_list->count)
-	{
-		ptr = system->item_list->head;
-		printf("\nitem not found\n");
-		continue;
-	}
+  	printf("\n%s%s - %s%s\n%.2f.\n%s\n%s\n",
+        "You have chosen: ",
+        current->data->name,
+        current->data->desc,
+        "This costs: $"
+        itemPrice,
+        "Insert the full amount in cents using coin or note denominations.",
+        "To cancel this purchase, enter a blank line."
+    );
 
-	if(ptr->data->on_hand == 0)
-	{
-		ptr = system->item_list->head;
-		printf("\nSorry; product is sold out\n");
-		continue;
-	}
+  	valid = FALSE;
 
-	valid = TRUE;
-
-	} while (!valid);
-
-	price = (double)((ptr->data->price.dollars * 100) + (double)(ptr->data->price.cents)) / 100;
-
-	printf("\nYou have selected: %s - %s this will cost you $%.2f.\n",ptr->data->name,ptr->data->desc,price);
-
-	printf("Please hand over the money – type in the value of each note/coin in cents.\n");
-
-	printf("Press enter or ctrl­d on a new line to cancel this purchase:\n");
-
-	valid = FALSE;
-
-	while (price > 0)
-	{
-		printf("You still need to give us $%.2f: ",price);
-
-		do
-		{	valid = FALSE;
-			if(getInteger(&inputmoney, 4, "", 5, 1000) == FALSE)
-			{
+  	while (itemPrice > 0) {
+		printf("%s %.2f: ", "You still need to give us $", itemPrice);
+		while(valid = FALSE) {
+            valid = FALSE;
+  			if(getInteger(&inserted, 4, "", 5, 1000) == FALSE) {
 				printf("\nTransaction cancelled, any input will now be refunded:\n");
-				refund(tempcash_register);
+				refund(change_system);
 				return FALSE;
-			}
+  			}
 
-			if(inputmoney != 5 && inputmoney != 10 &&
-			  inputmoney != 20 && inputmoney != 50 &&
-			  inputmoney != 100 && inputmoney != 200 &&
-			  inputmoney != 500 && inputmoney != 1000)
-			  {
-				printf("\nError; you entered %d; please enter correct denominations only aka 5,10,100,500\nTry again:",inputmoney);
-				continue;
-			  }
-
-			valid = TRUE;
-
-		} while (!valid);
-
-		switch(inputmoney)
-		{
-			case 5 :
-				tempcash_register[0].count++;
-				break;
-			case 10 :
-				tempcash_register[1].count++;
-				break;
-			case 20 :
-				tempcash_register[2].count++;
-				break;
-			case 50 :
-				tempcash_register[3].count++;
-				break;
-			case 100 :
-				tempcash_register[4].count++;
-				break;
-			case 200 :
-				tempcash_register[5].count++;
-				break;
-			case 500 :
-				tempcash_register[6].count++;
-				break;
-			case 1000 :
-				tempcash_register[7].count++;
-				break;
+  			if(inserted != 5 && inserted != 10 && inserted != 20 && inserted != 50 && inserted != 100 && inserted != 200 && inserted != 500 && inserted != 1000) {
+  				printf("%s%d%s\n",
+                    "Oops! You inserted: ",
+                    inserted,
+                    "c. You can only insert 5, 10, 100, 500 or 1000!"
+                );
+      			continue;
+  			} else {
+                valid = TRUE;
+            }
 		}
 
-
-		price = ((price * 100) - inputmoney) / 100;
-	}
-
-
-	price *= -1;
-
-	changecheck = price * 100;
-
-
-
-
-	for(i = 0; i < NUM_DENOMS; i++)
-	{
-
-		system->cash_register[i].count += tempcash_register[i].count;
-
-	}
-
-	for(i = 0; i < NUM_DENOMS; i++)
-	{
-		switch(system->cash_register[i].denom)
-		{
-			case FIVE_CENTS :
-				totalmoney += system->cash_register[FIVE_CENTS].count * 5;
+		switch(inserted) {
+  			case 5 :
+                /* 5c inserted */
+				change_system[0].count += 1;
 				break;
-			case TEN_CENTS :
-				totalmoney += system->cash_register[TEN_CENTS].count * 10;
+
+  			case 10 :
+                /* 10c inserted */
+				change_system[1].count += 1;
 				break;
-			case TWENTY_CENTS :
-				totalmoney += system->cash_register[TWENTY_CENTS].count * 20;
+
+  			case 20 :
+                /* 20c inserted */
+				change_system[2].count += 1;
 				break;
-			case FIFTY_CENTS :
-				totalmoney += system->cash_register[FIFTY_CENTS].count * 50;
+
+  			case 50 :
+                /* 50c inserted */
+				change_system[3].count += 1;
 				break;
-			case ONE_DOLLAR :
-				totalmoney += system->cash_register[ONE_DOLLAR].count * 100;
+
+  			case 100 :
+                /* $1 inserted */
+				change_system[4].count += 1;
 				break;
-			case TWO_DOLLARS :
-				totalmoney += system->cash_register[TWO_DOLLARS].count * 200;
+
+  			case 200 :
+                /* $2 inserted */
+				change_system[5].count += 1;
 				break;
-			case FIVE_DOLLARS :
-				totalmoney += system->cash_register[FIVE_DOLLARS].count * 500;
+
+  			case 500 :
+                /* $5 inserted */
+				change_system[6].count += 1;
 				break;
-			case TEN_DOLLARS :
-				totalmoney += system->cash_register[TEN_DOLLARS].count * 1000;
+
+  			case 1000 :
+                /* $10 inserted */
+				change_system[7].count += 1;
 				break;
-		}
-	/* printf("\n\n%d %d %d\n\n",changecheck,totalmoney,(totalmoney / changecheck)); */
 
-	}
-	/* printf("\n\n%d %d %d\n\n",changecheck,totalmoney,(totalmoney / changecheck)); */
-	if ((totalmoney / changecheck) < 1)
-	{
-		printf("\nSorry there is not enough change in the system for the amount you entered\nYour money will now be refunded:\n");
+            default:
+                printf("Machine error! Please report this to the owner on the side of the vending machine.")
+                break;
+		}
 
-		for(i = 0; i < NUM_DENOMS; i++)
-	{
-		system->cash_register[i].count -= tempcash_register[i].count;
+		itemPrice = ((itemPrice * 100) - inserted) / 100;
+  	}
 
-	}
-	refund(tempcash_register);
-	}
+  	itemPrice *= -1;
+  	cashOnHand = itemPrice * 100;
 
-	printf("You gave $%.2f extra\nYour change is:\n",price);
+  	for(denomination = 0; denomination < NUM_DENOMS; denomination++) {
+  		system->cash_register[denomination].count += change_system[denomination].count;
+  	}
 
-	while(price != 0.00)
-	{
-		if(price >= 10 && system->cash_register[7].count > 0)
-		{
-			price -= 10;
-			printf("10 Dollars\n");
-			system->cash_register[7].count--;
+  	for(denomination = 0; denomination < NUM_DENOMS; denomination++) {
+		switch(system->cash_register[denomination].denom) {
+  			case FIVE_CENTS :
+    				totalMoney += system->cash_register[FIVE_CENTS].count * 5;
+    				break;
+  			case TEN_CENTS :
+    				totalMoney += system->cash_register[TEN_CENTS].count * 10;
+    				break;
+  			case TWENTY_CENTS :
+    				totalMoney += system->cash_register[TWENTY_CENTS].count * 20;
+    				break;
+  			case FIFTY_CENTS :
+    				totalMoney += system->cash_register[FIFTY_CENTS].count * 50;
+    				break;
+  			case ONE_DOLLAR :
+    				totalMoney += system->cash_register[ONE_DOLLAR].count * 100;
+    				break;
+  			case TWO_DOLLARS :
+    				totalMoney += system->cash_register[TWO_DOLLARS].count * 200;
+    				break;
+  			case FIVE_DOLLARS :
+    				totalMoney += system->cash_register[FIVE_DOLLARS].count * 500;
+    				break;
+  			case TEN_DOLLARS :
+    				totalMoney += system->cash_register[TEN_DOLLARS].count * 1000;
+    				break;
 		}
-		else if(price >= 5 && system->cash_register[6].count > 0)
-		{
-			price -= 5;
-			printf("5 Dollars\n");
-			system->cash_register[6].count--;
-		}
-		else if(price >= 2 && system->cash_register[5].count > 0)
-		{
-			price -= 2;
-			printf("2 Dollars\n");
-			system->cash_register[5].count--;
-		}
-		else if(price >= 1 && system->cash_register[4].count > 0)
-		{
-			price -= 1;
-			printf("1 Dollar\n");
-			system->cash_register[4].count--;
-		}
-		else if(price >= 0.50 && system->cash_register[3].count > 0)
-		{
-			price -= 0.50;
-			printf("50 Cents\n");
-			system->cash_register[3].count--;
-		}
-		else if(price >= 0.20 && system->cash_register[2].count > 0)
-		{
-			price -= 0.20;
-			printf("20 Cents\n");
-			system->cash_register[2].count--;
-		}
-		else if(price >= 0.10 && system->cash_register[1].count > 0)
-		{
-			price -= 0.10;
-			printf("10 Cents\n");
-			system->cash_register[1].count--;
-		}
-		else if(price >= 0.05 && system->cash_register[0].count > 0)
-		{
-			price -= 0.05;
-			printf("5 Cents\n");
-			system->cash_register[0].count--;
-		}
-	}
+  	}
 
-	ptr->data->on_hand--;
+  	if ((totalMoney / cashOnHand) < 1) {
+    	printf("\n%s\n%s\n",
+            "Sorry the machine doesn\'t have enough change for that denomination.",
+            "Refunding your money now."
+        );
 
-	printf("Thank you, Here is your %s\n",ptr->data->name);
-	printf("Please come again soon\n");
+        for(denomination = 0; denomination < NUM_DENOMS; denomination++) {
+  	         system->cash_register[denomination].count -= change_system[i].count;
+        }
 
-	return FALSE;
+        /* return denominations to change system */
+  	    refund(change_system);
+  	}
+
+  	printf("You inserted too much m8.\nYour change is: ");
+
+  	while(itemPrice != 0.00) {
+		if( system->cash_register[7].count > 0 && itemPrice >= 10 ) {
+  			itemPrice -= 10;
+  			printf("$10\n");
+  			system->cash_register[7].count--;
+		} else if ( system->cash_register[6].count > 0 && itemPrice >= 5 ) {
+  			itemPrice -= 5;
+  			printf("$5\n");
+  			system->cash_register[6].count--;
+		} else if ( system->cash_register[5].count > 0 && itemPrice >= 2 ) {
+  			itemPrice -= 2;
+  			printf("$2\n");
+  			system->cash_register[5].count--;
+		} else if ( system->cash_register[4].count > 0 && itemPrice >= 1 ) {
+  			itemPrice -= 1;
+  			printf("$1\n");
+  			system->cash_register[4].count--;
+		} else if ( system->cash_register[3].count > 0 && itemPrice >= 0.50 ) {
+  			itemPrice -= 0.50;
+  			printf("$0.50\n");
+  			system->cash_register[3].count--;
+		} else if ( system->cash_register[2].count > 0 && itemPrice >= 0.20 ) {
+  			itemPrice -= 0.20;
+  			printf("$0.20\n");
+  			system->cash_register[2].count--;
+		} else if ( system->cash_register[1].count > 0 && itemPrice >= 0.10 ) {
+  			itemPrice -= 0.10;
+  			printf("$0.10\n");
+  			system->cash_register[1].count--;
+		} 	else if ( system->cash_register[0].count > 0 && itemPrice >= 0.05 ) {
+  			itemPrice -= 0.05;
+  			printf("$0.05\n");
+  			system->cash_register[0].count--;
+		}
+  	}
+
+  	current->data->on_hand -= 1;
+  	printf("Success! Thanks for your purchase. Returning to menu. \n");
+  	return TRUE;
 }
 
 /**
@@ -309,82 +308,15 @@ BOOLEAN purchase_item(struct ppd_system * system)
  **/
 BOOLEAN save_system(struct ppd_system * system)
 {
-    FILE * stock;
-    FILE * coins;
-    int i = 0;
-    double price = 0.0;
-    struct ppd_node * ptr = system->item_list->head;
-	printf("\n\nSave and Exit\n\n");
+    printf("\n%s\n", "Save and Exit: ");
 
-    stock = fopen(system->stock_file_name ,"w+");
-    coins = fopen(system->coin_file_name ,"w+");
+    save_list(system, 'stock');
+    save_list(system, 'coins');
+    free_malloc(system);
 
-    if(stock == NULL)
-    {
-        printf("Error opening stock file\n");
-        return FALSE;
-    }
-    else if (coins == NULL)
-    {
-        printf("Error opening coins file\n");
-        return FALSE;
-    }
-    else
-    {
-        printf("files successfully opened\n");
-    }
+    printf("\n%s\n", "Success! Saved and exiting.");
 
-    for (i = 0; i < system->item_list->count; i++) {
-
-        price = (double)((ptr->data->price.dollars * 100) + ptr->data->price.cents) / 100;
-
-        fprintf(stock, "%s|%s|%s|%.2f|%d\n",ptr->data->id,ptr->data->name,ptr->data->desc,price,ptr->data->on_hand);
-
-        ptr = ptr->next;
-    }
-
-    for(i = NUM_DENOMS; i >= 0; i--)
-    {
-        switch(system->cash_register[i].denom)
-        {
-            case TEN_DOLLARS :
-                fprintf(coins,"1000,%d\n",system->cash_register[i].count);
-                break;
-            case FIVE_DOLLARS :
-                fprintf(coins,"500,%d\n",system->cash_register[i].count);
-                break;
-            case TWO_DOLLARS :
-                fprintf(coins,"200,%d\n",system->cash_register[i].count);
-                break;
-            case ONE_DOLLAR :
-                fprintf(coins,"100,%d\n",system->cash_register[i].count);
-                break;
-            case FIFTY_CENTS :
-                fprintf(coins,"50,%d\n",system->cash_register[i].count);
-                break;
-            case TWENTY_CENTS :
-                fprintf(coins,"20,%d\n",system->cash_register[i].count);
-                break;
-            case TEN_CENTS :
-                fprintf(coins,"10,%d\n",system->cash_register[i].count);
-                break;
-            case FIVE_CENTS :
-                fprintf(coins,"5,%d\n",system->cash_register[i].count);
-                break;
-
-        }
-
-
-    }
-
-    printf("\n\nAll data successfully saved, closing files and exiting...\n\n");
-
-    fclose(stock);
-    fclose(coins);
-
-	system_free(system);
-
-	return TRUE;
+    return TRUE;
 }
 
 /**
@@ -394,145 +326,167 @@ BOOLEAN save_system(struct ppd_system * system)
  **/
 BOOLEAN add_item(struct ppd_system * system)
 {
-	BOOLEAN finished = FALSE;
-	BOOLEAN valid = FALSE;
-	int i = 0;
-	char tempid[IDLEN + 1];
-	char tempname[NAMELEN + 1];
-	char tempdesc[DESCLEN + 1];
-	char tempprice[MAX_PRICE_LEN + 1];
-	stock_detail newstockdetail = 0;
-	struct ppd_node * ptr = system->item_list->head;
-	int dollars = 0, cents = 0;
-	double price = 0.0;
 
+  	BOOLEAN valid = FALSE;
 
-	for(i = 0; i < system->item_list->count - 1; i++)
-	{
-	ptr = ptr->next;
-	}
+    /* ensure incoming pointer is valid */
+    assert(system->item_list);
 
+    /* declare all variables required */
+  	struct ppd_node * current;
+	struct ppd_node * new;
 
-	ptr->next = malloc(sizeof(struct ppd_node));
-	ptr->next->data = malloc(sizeof(struct ppd_stock));
+    int i = 0,
+        step = 0,
+        number_of_product_attributes = 4,
+        item = 0,
+        itemPriceLength,
+        itemPriceInput,
+        itemCents = 0,
+        itemDollars = 0,
+        itemOnHand = 0;
 
+    char itemId[IDLEN + 1],
+        itemName[NAMELEN + 1],
+        itemDescription[DESCLEN + 1],
+        itemPriceRaw[MAX_PRICE_LEN + 1];
+    char * priceEndPtr;
 
-	strcpy(ptr->next->data->id,"");
-	strcpy(ptr->next->data->name,"");
-	strcpy(ptr->next->data->desc,"");
-	ptr->next->data->on_hand = 0;
-	ptr->next->data->price.dollars = dollars;
-	ptr->next->data->price.cents = cents;
+    double itemPrice = 0.0;
 
-    printf("\n\nAdd Item\n\n");
+    printf("\n%s\n", "Adding Item: ");
 
-	while(!finished)
-	{
+    /* allocate space for the new node */
+    new = malloc(sizeof(struct ppd_node));
 
-		switch(newstockdetail)
-		{
-		case ID :
-			/* snprintf (tempid,IDLEN + 1,"I%04d\0", system->item_list->count + 1); */
-			sprintf (tempid,"I%04d", system->item_list->count + 1);
+    if (!new) {
+        printf("failed to create a new node\n");
+        return FALSE;
+    }
 
+    /* GET ALL THE DATA FROM USER, LOOP ON ERRORS */
+    while (step < number_of_product_attributes) {
+        switch (step) {
+            case 0:
+                /* set item ID */
+                sprintf(itemId, "%s%04d", "I", (system->item_list->count + 1));
+                break;
 
+            case 1:
+                /* set item name */
+                printf("Enter a name for this new item: \n");
+                if(getInput(itemName, (NAMELEN + 1)) == FALSE) {
+                    printf("Error adding name");
+                    continue;
+                } else {
+                    step += 1;
+                }
+                break;
 
+            case 2:
+                /* set item description */
+                printf("Enter a description for this new item: \n");
+                if(getInput(itemDescription, (DESCLEN + 1)) == FALSE) {
+                    printf("Error adding description");
+                    continue;
+                } else {
+                    step += 1;
+                }
+                break;
 
+            case 3:
+                /* set item price */
+                /* collect user input and validate */
+                printf("Enter a price for this new item in dollars: \n");
+                if(getInput(itemPriceRaw, (MAX_PRICE_LEN + 1)) == FALSE) {
+                    printf("Error adding price");
+                    continue;
+                } else {
+                    /* convert string input to integer and validate */
+                    itemPrice = strtod(tempString, &priceEndPtr);
 
-			strcpy(ptr->next->data->id,tempid);
+                    if (!itemPrice || itemPrice < 0 ) {
+                        printf("Error! This is not a valid price.");
+                        continue;
+                    } else {
 
-			break;
-		case NAME :
+                        /* Convert price input to correct formats and add to variables.*/
+                        itemDollars = (int)itemPrice;
+                        itemCents = fmod((itemPrice * 100), 100);
+                        itemCents -= fmod(itemCents, 5);
+                        step += 1;
+                    }
+                }
+                break;
+        }
+    }
 
+    /* populate new list item */
+    new->next = NULL;
+    strcpy(new->data->id, itemId);
+    strcpy(new->data->name, itemName);
+    strcpy(new->data->desc, itemDescription);
+    new->data->on_hand = DEFAULT_STOCK_LEVEL;
+    new->data->price.dollars = itemDollars;
+    new->data->price.cents = itemCents;
 
-			if(readStringInput(tempname,NAMELEN + 1, "\nEnter the item name:", "Error; invalid input") == FALSE)
-			{
-				free(ptr->next->data);
-				free(ptr->next);
+    current = system->item_list->head;
+    /* iterate over all items in item_list and shift all elements
+     * down array 1 position
+     */
+  	for(item = 0; item < (system->item_list->count - 1); item++) {
+  	    current = current->next;
+  	}
 
-				return FALSE;
-			}
+    /* **************************************************************
+     * REWORK SORT - based near perfectly off my assessed LAB2 code
+     * if we are at the begging of the list just assign the new node
+     * to the head of the list */
 
+    if(system->item_list->head == NULL)
+    {
+        system->item_list->head = new;
+        /* increment the count of items in the list */
+        system->item_list->count += 1;
+        /* job done */
+        return TRUE;
+    }
+    /* grab the beginning of the list and find the insertion point
+     * for our data. */
+    current = system->item_list->head;
+    while(current != NULL && strcmp(current->data->name, new->data->name) > 0) {
+        /* grab the current pointer and assign it to previous so we
+         * can insert data between two nodes
+         */
+        prev=current;
+        current=current->next;
+    }
 
+    /* insertion at the beginning of the list */
+    if(prev == NULL)
+    {
+        new->next = system->item_list->head;
+        system->item_list->head = new;
+    }
+    /* insertion at the end - redundant if statement because of the
+     * else statement further on
+     **/
+    else if(!current)
+    {
+        new->next = NULL;
+        prev->next = new;
+    }
+    else
+    {
+        prev->next = new;
+        new->next = current;
+    }
+    /* increment the count of items in the list */
+    system->item_list->count += 1;
 
-
-
-
-			strcpy(ptr->next->data->name,tempname);
-
-
-
-			break;
-		case DESC :
-
-			if(readStringInput(tempdesc,DESCLEN + 1, "\nEnter the item description:", "Error; invalid input") == FALSE)
-			{
-				free(ptr->next->data);
-				free(ptr->next);
-
-			}
-
-
-
-
-
-
-			strcpy(ptr->next->data->desc,tempdesc);
-
-
-			break;
-		case PRICE :
-
-			while(!valid)
-			{
-			if(readStringInput(tempprice,MAX_PRICE_LEN + 1, "\nEnter the price for this item aka 2.50:", "Error; invalid input") == FALSE)
-			{
-				free(ptr->next->data);
-				free(ptr->next);
-
-			}
-
-
-
-
-
-			price = strtod(tempprice, NULL);
-			if (price == 0.0)
-			{
-			printf("Error with input=%.2f; could not read input as price, please check only numbers are input",price);
-			continue;
-			}
-			else {
-			valid = TRUE;
-			}
-			}
-			dollars = (int)price;
-			cents = fmod((price * 100),100);
-
-			cents -= fmod(cents,5);
-
-			ptr->next->data->price.dollars = dollars;
-			ptr->next->data->price.cents = cents;
-			break;
-		case ON_HAND :
-			ptr->next->data->on_hand = DEFAULT_STOCK_LEVEL;
-
-
-
-			finished = TRUE;
-			break;
-
-		}
-	newstockdetail++;
-	}
-
-
-
-	system->item_list->count++;
-
-	system_sort(system);
-
-    return FALSE;
+    /* done */
+    printf("Success! The new element was added into the list in sorted order.\n");
+    return TRUE;
 }
 
 /**
@@ -540,73 +494,52 @@ BOOLEAN add_item(struct ppd_system * system)
  * all the information for managing the system.
  * @return true when removing an item succeeds and false when it does not
  **/
-BOOLEAN remove_item(struct ppd_system * system)
-{
-	struct ppd_node * delptr = system->item_list->head;
-	struct ppd_node * prevdelptr = system->item_list->head;
-	int i = 0,j = 0;
-	char input[IDLEN + 1];
-	BOOLEAN valid = FALSE;
-    printf("\n\nRemove Item\n\n");
+BOOLEAN remove_item(struct ppd_system * system) {
+	BOOLEAN deleted = FALSE;
 
-	do
-	{
+	struct ppd_node * previous = NULL;
+    struct ppd_node * current = system->item_list->head;
 
-	 if(readStringInput(input,IDLEN + 1, "Enter the item id of the item to remove from the menu:", "Error; invalid input") == FALSE)
-	 {
-		 return FALSE;
-	 }
+    int item = 0;
 
-	 for (i = 0; i < system->item_list->count; i++)
-	 {
-		 if ( strcmp(delptr->data->id,input) == 0)
-		 {
-			 break;
-		 }
-		 delptr = delptr->next;
-	 }
+	char delete[IDLEN + 1];
 
-	if (i == system->item_list->count)
-	{
-		delptr = system->item_list->head;
-		printf("\nitem not found\n");
-		continue;
+    printf("\n%s\n", "Remove Item: ");
+
+	while (!gotInput) {
+
+        printf("Enter the ID of the item you want to delete (eg. I0004): \n");
+        if (getInput( delete, IDLEN + 1) == FALSE) {
+            return FALSE;
+        } else {
+            gotInput = TRUE;
+            /* Input received, to test now */
+            for (item = 0; item < system->item_list->count; item++) {
+                /* check if match found between current and element for deletion */
+                if ( strcmp(current->data->id, delete) == 0) {
+                    previous->next = current->next;
+                    free(current->data);
+                    free(current);
+
+                    system->item_list->count--;
+                    printf("Success! Element has been removed from the list.")
+                    break;
+                } else {
+                    previous = current;
+                    current = current->next;
+                }
+            }
+
+            /* If we have iterated to the end of the list */
+            if (item == system->item_list->count) {
+                current = system->item_list->head;
+                printf("\nitem not found\n");
+                continue;
+            }
+        }
 	}
 
-
-	valid = TRUE;
-
-	} while (!valid);
-
-	if(delptr == system->item_list->head)
-	{
-	system->item_list->head = delptr->next;
-
-	printf("\n%s - %s - %s has been removed from the system.\n",delptr->data->id,delptr->data->name,delptr->data->desc);
-
-
-	free(delptr->data);
-	free(delptr);
-	system->item_list->count--;
-	return FALSE;
-	}
-
-	for (j = 0; j < i - 1; j++)
-	{
-
-		 prevdelptr = prevdelptr->next;
-	}
-
-	printf("\n%s - %s - %s has been removed from the system.\n",delptr->data->id,delptr->data->name,delptr->data->desc);
-
-	prevdelptr->next = delptr->next;
-
-	free(delptr->data);
-	free(delptr);
-
-	 system->item_list->count--;
-
-    return FALSE;
+    return TRUE;
 }
 
 /**
@@ -614,21 +547,19 @@ BOOLEAN remove_item(struct ppd_system * system)
  * all the information for managing the system.
  * @return true as this function cannot fail.
  **/
-BOOLEAN reset_stock(struct ppd_system * system)
-{
-	struct ppd_node * ptr = system->item_list->head;
-	int i = 0;
-	printf("\n\nReset Stock\n\n");
+BOOLEAN reset_stock(struct ppd_system * system) {
+    struct ppd_node * current = system->item_list->head;
+	int item;
+	printf("\n%s\n", "Reset Stock: ");
 
-	 for (i = 0; i < system->item_list->count; i++)
-	 {
-		 ptr->data->on_hand = DEFAULT_STOCK_LEVEL;
-		 ptr = ptr->next;
+	 for (item = 0; item < system->item_list->count; item++) {
+		 current->data->on_hand = DEFAULT_STOCK_LEVEL;
+		 current = current->next;
 	 }
 
-	printf("\n\nall stock has been reset to the default level of %d \n\n",DEFAULT_STOCK_LEVEL);
+	printf("\n%s\n", "Success! Stock has been reset to the defaults levels.");
 
-    return FALSE;
+    return TRUE;
 }
 
 /**
@@ -636,19 +567,18 @@ BOOLEAN reset_stock(struct ppd_system * system)
  * all the information for managing the system.
  * @return true as this function cannot fail.
  **/
-BOOLEAN reset_coins(struct ppd_system * system)
-{
-	int i = 0;
-	printf("\n\nReset Coins\n\n");
 
-	for(i = 0; i < NUM_DENOMS; i++)
-	{
-		system->cash_register[i].count = DEFAULT_COIN_COUNT;
+BOOLEAN reset_coins(struct ppd_system * system) {
+    int denomination;
+	printf("\n%s\n", "Reset Coins: ");
+
+	for(denomination = 0; denomination < NUM_DENOMS; denomination++) {
+		system->cash_register[denomination].count = DEFAULT_COIN_COUNT;
 	}
 
-   printf("\n\nall coins have been reset to the default level of %d \n\n",DEFAULT_COIN_COUNT);
+   printf("\n%s\n", "Success! Coins have been reset to their defaults levels.");
 
-    return FALSE;
+    return TRUE;
 }
 
 /**
@@ -658,13 +588,14 @@ BOOLEAN reset_coins(struct ppd_system * system)
  **/
 BOOLEAN display_coins(struct ppd_system * system)
 {
-	int i = 0;
-	printf("\n\nDisplay Coins\n\n");
+    int denominations = 0;
+	printf("\n%s\n%s\n%-15s| %5s\n-\n",
+        "Display Coins: ",
+        "Coins Summary",
+        "Denomination",
+        "Count"
+    );
 
-	printf("Coins Summary");
-	printf("\n­­­­­­­­­­­­­\n");
-	printf("%-15s| %5s\n","Denomination","Count");
-	printf("­­­­­­­­­­­­­­­­­­­­­-\n");
 	for(i = 0; i < NUM_DENOMS; i++)
 	{
 		switch(system->cash_register[i].denom)
@@ -694,71 +625,8 @@ BOOLEAN display_coins(struct ppd_system * system)
 				printf("%-15s |    %-5d\n","10 dollar",system->cash_register[i].count);
 				break;
 		}
-	/* printf("\n\n%d %d %d\n\n",changecheck,totalmoney,(totalmoney / changecheck)); */
 
 	}
 
-    return FALSE;
-}
-
-BOOLEAN abort_program(struct ppd_system * system)
-{
-
-	printf("\n\nAbort Program\n\n");
-
-	system_free(system);
-
-	return TRUE;
-}
-
-void refund(struct coin tempcash_register[])
-{
-int i = 0,j = 0;
-for(i = 0; i < NUM_DENOMS; i++)
-	{
-		switch(tempcash_register[i].denom)
-		{
-			case FIVE_CENTS :
-				for(j = 0; j < tempcash_register[FIVE_CENTS].count; j++) {
-					printf("5 Cents\n");
-				}
-				break;
-			case TEN_CENTS :
-				for(j = 0; j < tempcash_register[TEN_CENTS].count; j++) {
-					printf("10 Cents\n");
-				}
-				break;
-			case TWENTY_CENTS :
-				for(j = 0; j < tempcash_register[TWENTY_CENTS].count; j++) {
-					printf("20 Cents\n");
-				}
-				break;
-			case FIFTY_CENTS :
-				for(j = 0; j < tempcash_register[FIFTY_CENTS].count; j++) {
-					printf("50 Cents\n");
-				}
-				break;
-			case ONE_DOLLAR :
-				for(j = 0; j < tempcash_register[ONE_DOLLAR].count; j++) {
-					printf("1 Dollar\n");
-				}
-				break;
-			case TWO_DOLLARS :
-				for(j = 0; j < tempcash_register[TWO_DOLLARS].count; j++) {
-					printf("2 Dollars\n");
-				}
-				break;
-			case FIVE_DOLLARS :
-				for(j = 0; j < tempcash_register[FIVE_DOLLARS].count; j++) {
-					printf("5 Dollars\n");
-				}
-				break;
-			case TEN_DOLLARS :
-				for(j = 0; j < tempcash_register[TEN_DOLLARS].count; j++) {
-					printf("10 Dollars\n");
-				}
-				break;
-		}
-	}
-
+    return TRUE;
 }

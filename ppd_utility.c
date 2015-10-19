@@ -10,9 +10,6 @@
  ***********************************************************************/
 
 #include "ppd_utility.h"
-
-
-
 /**
  * @file ppd_utility.c contains implementations of important functions for
  * the system. If you are not sure where to implement a new function,
@@ -31,241 +28,133 @@ void read_rest_of_line(void)
     clearerr(stdin);
 }
 
-/**
- * @param system a pointer to a @ref ppd_system struct that contains
- * all the data in the system we are manipulating
- * @param coins_name the name of the coins file
- * @param stock name the name of the stock file
- **/
-BOOLEAN load_data(struct ppd_system * system , const char * coins_name,
-const char * stock_name)
-{
-	FILE * stock;
-	FILE * coins;
-	char line[DESCLEN + NAMELEN + IDLEN + MAX_ON_HAND_LEN + MAX_PRICE_LEN + 1];
-	char * token;
-	stock_detail currtoken = 0;
-	int itemNo = 0;
-	int coincount = 0,i = NUM_DENOMS - 1;
-	unsigned priceDollars = 0;
-	double priceCents = 0.0;
-
-
-
-
-
-	struct ppd_node * current =system->item_list->head;
-
-
-
-
-
-
-	stock = fopen(system->stock_file_name ,"r");
-	coins = fopen(system->coin_file_name ,"r");
-
-	if(stock == NULL)
-	{
-	printf("Error opening stock file\n");
-	return FALSE;
-	}
-	else if (coins == NULL)
-	{
-	printf("Error opening coins file\n");
-	return FALSE;
-	}
-	else
-	{
-	printf("files successfully opened\n");
-	}
-
-	while(fgets(line,DESCLEN + NAMELEN + IDLEN + MAX_ON_HAND_LEN + MAX_PRICE_LEN + 1,stock) != NULL)
-	{
-	token = strtok(line,STOCK_DELIM);
-	currtoken = 0;
-
-
-
-
-		while(token != NULL)
-		{
-
-			switch(currtoken)
-			{
-			case ID:
-			/*	strcpy(system->item_list->head->data->id, token); */
-				strcpy(current->data->id, token);
-				break;
-			case NAME:
-			/*	strcpy(system->item_list->head->data->name, token); */
-				strcpy(current->data->name, token);
-				break;
-			case DESC:
-			/*	strcpy(system->item_list->head->data->desc, token); */
-				strcpy(current->data->desc, token);
-				break;
-			case PRICE:
-			/*	system->item_list->head->data->price.dollars = atoi(token); */
-			/*	system->item_list->head->data->price.cents = atof(token) - floor(atoi(token)); */
-				priceDollars = (int) strtol(token, NULL,10);
-				priceCents = strtod (token, NULL);
-
-
-
-				priceCents = fmod((priceCents * 100), 100 );
-				priceCents -= fmod(priceCents,5);
-
-				current->data->price.dollars = priceDollars;
-				current->data->price.cents = priceCents;
-				break;
-			case ON_HAND:
-			/*	system->item_list->head->data->on_hand = atoi(token); */
-				current->data->on_hand = atoi(token);
-				break;
-			}
-
-
-
-		token = strtok(NULL,STOCK_DELIM);
-		currtoken++;
-
-
-
-		}
-			/*printf("item %d: %s %s %s %d %d %d\n",itemNo,system->item_list->head->data->id,
-			system->item_list->head->data->name,system->item_list->head->data->desc,
-			system->item_list->head->data->price.dollars,
-			system->item_list->head->data->price.cents,system->item_list->head->data->on_hand);*/
-
-			printf("item %d: %s %s %s %d %d %d\n",itemNo,current->data->id,
-			current->data->name,current->data->desc,
-			current->data->price.dollars,
-			current->data->price.cents,current->data->on_hand);
-
-			itemNo++;
-
-
-
-
-
-
-
-			current->next = malloc(sizeof(struct ppd_node));
-			current->next->data = malloc(sizeof(struct ppd_stock));
-
-
-			current = current->next;
-
-			system->item_list->count++;
-
-
-
-
-
-
-
-	}
-	printf("\nstock successfully loaded\n");
-
-
-
-
-
-
-
-
-	while(fgets(line,MAX_COINLEN + 1,coins) != NULL)
-	{
-
-	if (i < 0)
-	{
-	printf("Error; invalid format of coins file, aka too many lines or incorrect delimeters");
-	return FALSE;
-	}
-
-	token = strtok(line,COIN_DELIM);
-
-	token = strtok(NULL,COIN_DELIM);
-
-	coincount = (int) strtol(token, NULL,10);
-
-	system->cash_register[i].count = coincount;
-
-	printf(" entry %d has %d \n",system->cash_register[i].denom,system->cash_register[i].count);
-
-	i--;
-
-
-
-
-
-
-
-	}
-
-	printf("\ncoins successfully loaded\n");
-
-	printf("\nall data successfully loaded, closing files...\n\n");
-	fclose(stock);
-	fclose(coins);
-
-	system_sort(system);
-
+BOOLEAN getInput(char writeTo[], int max) {
+    /* collect user input and validate */
+    char itemPriceRaw[max];
+
+    fgets(itemPriceRaw, (MAX_PRICE_LEN + 1), stdin);
+
+    itemPriceLength = strlen(itemPriceRaw) - 1;
+    if (itemPriceRaw[itemPriceLength] == '\n'){
+        itemPriceRaw[itemPriceLength] = '\0';
+    } else {
+        return FALSE;
+    }
+
+    strcpy(writeTo, itemPriceRaw);
     return TRUE;
 }
 
-/**
- * @param system a pointer to a @ref ppd_system struct that holds all
- * the data for the system we are creating
- **/
-BOOLEAN system_init(struct ppd_system * system)
-{
-	int i = 0;
-	/* old (sizeof(system->cash_register)/sizeof(system->cash_register[0])) */
-	for(i = 0; i < NUM_DENOMS; i++)
-	{
-		system->cash_register[i].denom = i;
+void save_list(struct ppd_system* system, char * data_type) {
 
-		system->cash_register[i].count = 0;
-	}
+    struct ppd_node * current = system->item_list->head;
 
-	/* system->stock_file_name = *argv[1]; */
+    int count = 0,
+        denomination = 0;
 
-	/* system->coin_file_name = *argv[2]; */
+    /* using IF to split functionality as you can't easily switch a string */
+    if (data_type == 'stock') {
+        /* code */
+        double itemPrice = 0.0;
+        FILE * openFile = fopen(system->coin_file_name, "w+");
+        if (!openFile) {
+            printf("Oops! Couldn\'t open the coins list.\n");
+            return FALSE;
+        }
 
-	system->item_list = malloc(sizeof(struct ppd_list ));
-	system->item_list->head = malloc(sizeof(struct ppd_node));
-	system->item_list->head->data = malloc(sizeof(struct ppd_stock));
-	system->item_list->head->next = malloc(sizeof(struct ppd_stock));
+        for (count = 0; count < system->item_list->count; count++) {
 
-	system->item_list->count = 0;
+            /* calculate and set itemPrice for item*/
+            itemPrice = (double)((current->data->price.dollars * 100) + current->data->price.cents) / 100;
+            /* write changes to items file */
+            fprintf(itemsFile, "%s|%s|%s|%.2f|%d\n",
+                current->data->id,
+                current->data->name,
+                current->data->desc,
+                itemPrice,
+                current->data->on_hand
+            );
 
-	strcpy(system->item_list->head->data->id, "");
+            current = current->next;
+        }
+    } else if (data_type == 'coins') {
+        /* code */
 
-	strcpy(system->item_list->head->data->name, "");
+        FILE * openFile = fopen(system->stock_file_name, "w+");
 
-	strcpy(system->item_list->head->data->desc, "");
+        if (!openFile) {
+            printf("Oops! Couldn\'t open the coins list.\n");
+            return FALSE;
+        }
 
-	system->item_list->head->data->on_hand = 0;
+        /* write changes to coins file */
+        for(denomination = NUM_DENOMS; denomination >= 0; denomination--) {
+            switch(system->cash_register[denomination].denom) {
+                case FIVE_CENTS :
+                    fprintf(coinsFile, "%s%d\n",
+                        "5,",
+                        system->cash_register[denomination].count
+                    );
+                    break;
+                case TEN_CENTS :
+                    fprintf(coinsFile, "%s%d\n",
+                        "10,",
+                        system->cash_register[denomination].count
+                    );
+                    break;
+                case TWENTY_CENTS :
+                    fprintf(coinsFile, "%s%d\n",
+                        "20,",
+                        system->cash_register[denomination].count
+                    );
+                    break;
+                case FIFTY_CENTS :
+                    fprintf(coinsFile, "%s%d\n",
+                        "50,",
+                        system->cash_register[denomination].count
+                    );
+                    break;
+                case ONE_DOLLAR :
+                    fprintf(coinsFile, "%s%d\n",
+                        "100,",
+                        system->cash_register[denomination].count
+                    );
+                    break;
+                case TWO_DOLLARS :
+                    fprintf(coinsFile,"%s%d\n",
+                        "200,",
+                        system->cash_register[denomination].count
+                    );
+                    break;
+                case FIVE_DOLLARS :
+                    fprintf(coinsFile, "%s%d\n",
+                        "500,",
+                        system->cash_register[denomination].count
+                    );
+                    break;
+                case TEN_DOLLARS :
+                    fprintf(coinsFile, "%s%d\n",
+                        "1000,",
+                        system->cash_register[denomination].count
+                    );
+                    break;
+            }
+        }
+    }
 
-	system->item_list->head->data->price.dollars = 0;
+    /* changes writte, close file */
+    printf("%s%s%s\n",
+        "List for ",
+        data_type,
+        " successfully saved."
+    );
 
-	system->item_list->head->data->price.cents = 0;
-
-
-
-
-
-    return TRUE;
+    fclose(openFile);
 }
 
-/**
- * @param system a pointer to a @ref ppd_system struct that holds all
- * the data for the system we are creating
- **/
-void system_free(struct ppd_system * system)
-{
-	struct ppd_node * prev = system->item_list->head;
+
+void free_malloc(struct ppd_system* system) {
+    struct ppd_node * prev = system->item_list->head;
 	struct ppd_node * next = system->item_list->head;
 	int i = 0;
 
@@ -278,144 +167,181 @@ void system_free(struct ppd_system * system)
 	}
 
 	free(system->item_list);
-
 }
 
 
-BOOLEAN getInteger(int* integer, unsigned length, char* prompt, int min, int max)
- {
-    int finished = FALSE;
-    char tempString[MAXINT + 2];
-    int tempInteger = 0;
-    char* endPtr;
-	char * line;
 
-    /* Continue to interact with the user until the input is valid. */
-    do
-    {
-       /* Provide a custom prompt. */
+/**
+ * @param system a pointer to a @ref ppd_system struct that contains
+ * all the data in the system we are manipulating
+ * @param coins_name the name of the coins file
+ * @param stock name the name of the stock file
+ **/
+BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const char * stock_name) {
 
+    FILE * coinFile = fopen(system->coin_file_name ,"r");
+    FILE * stockFile = fopen(system->stock_file_name ,"r");
 
-       /* Accept input. "+2" is for the \n and \0 characters. */
-       line = fgets(tempString, length + 2, stdin);
+    ppd_item_attr product_object_step = 0;
+    BOOLEAN loadInProgress = TRUE;
 
-	    if(line == NULL) {
-			return FALSE;
+	struct ppd_node * current = system->item_list->head;
+
+    int currentItem = 0,
+        currentCoin = 0,
+        denomination = (NUM_DENOMS - 1);
+
+    char line[LINECHARS],
+        * chunk;
+
+    double itemPrice = 0.0;
+    unsigned itemPriceDollars = 0;
+    unsigned itemPriceCents = 0;
+
+    if (!coinFile || !stockFile) {
+        printf("Oops! There was a problem opening your data files. Please check them and try again.\n");
+        return FALSE;
+    } else {
+        printf("successfully opened data files.\n");
+    }
+
+    while (fgets(line, LINECHARS , stockFile) {
+
+        /* split and chunk lines by the '|' delimeter */
+        chunk = strtok(line, "|");
+		product_object_step = 0;
+
+		while(chunk != NULL) {
+
+            /* run chunk against the product object */
+			switch(product_object_step) {
+    			case id:
+    				strcpy(current->data->id, chunk);
+    				break;
+
+    			case name:
+    				strcpy(current->data->name, chunk);
+    				break;
+
+    			case description:
+    				strcpy(current->data->desc, chunk);
+    				break;
+
+    			case price:
+    				itemPriceDollars = (int) strtol(chunk, NULL,10);
+    				itemPriceCents = strtod (chunk, NULL);
+    				itemPriceCents = fmod((itemPriceCents * 100), 100);
+    				itemPriceCents -= fmod(itemPriceCents, 5);
+    				current->data->price.dollars = priceDollars;
+    				current->data->price.cents = priceCents;
+    				break;
+
+    			case onHand:
+    				current->data->on_hand = atoi(chunk);
+    				break;
+			}
+
+    		token = strtok(NULL, STOCK_DELIM);
+    		product_object_step += 1;
+
 		}
 
-		if(strcmp(tempString, "\n") == 0) {
-			return FALSE;
-		}
+        printf("item %d: %s %s %s %d %d %d\n",
+            itemNo,
+            current->data->id,
+            current->data->name,
+            current->data->desc,
+            current->data->price.dollars,
+            current->data->price.cents,
+            current->data->on_hand
+        );
 
-       /* A string that doesn't have a newline character is too long. */
-       if (tempString[strlen(tempString) - 1] != '\n')
-       {
-          printf("Input was too long.\n");
-           read_rest_of_line();
-       }
-       else
-       {
-          /* Overwrite the \n character with \0. */
-          tempString[strlen(tempString) - 1] = '\0';
+        current->next = malloc(sizeof(struct ppd_node)),
+        current->next->data = malloc(sizeof(struct ppd_stock)
+        itemNo += 1;
+		current = current->next;
+		system->item_list->count++;
 
-          /* Convert string to an integer. */
-          tempInteger = (int) strtol(tempString, &endPtr, 10);
+    }
 
-          /* Validate integer result. */
-          if (strcmp(endPtr, "") != 0)
-          {
-             printf("Input was not numeric.\n");
-          }
-          else if (tempInteger < min || tempInteger > max)
-          {
-             printf("Input was not within range %d - %d.\n", min, max);
-          }
-          else
-          {
-             finished = TRUE;
-          }
-       }
-    } while (finished == FALSE);
+    printf("\n Success! Stock has been validated and loaded into memory.");
 
-   /* Make the result integer available to calling function. */
-    *integer = tempInteger;
+    while(fgets(line, COINLEN + 1, coins)) {
 
-    return TRUE;
- }
-
- BOOLEAN readStringInput(char theString[], int sizeLimit, char *message, char *errorMessage) {
-
-    char tempString[DESCLEN + NAMELEN + IDLEN + MAX_ON_HAND_LEN + MAX_PRICE_LEN + 2];
-	char * line;
-    int finished = FALSE;
-
-    do {
-		/* default prompt to user*/
-        printf("%s", message);
-
-		/* sets the return value of fgets to the char point line*/
-        line = fgets(tempString, sizeLimit + 2, stdin);
-		/*if fgets returns null meaning ctrl D was entered, return FALSE and kill the function, meaning return to main menu*/
-		if(line == NULL) {
-			return FALSE;
-		}
-		if(strcmp(tempString, "\n") == 0) {
-			return FALSE;
-		}
-		/* if the user exceed the size and the last char entered isnt a return key enter, error message and clear buffer*/
-        if(tempString[strlen(tempString) - 1] != '\n') {
-
-            printf("%s\n", errorMessage);
-
-            read_rest_of_line();
-
-        } else {
-			/*gets rid of the new line char and replaces it with a null terminator*/
-            tempString[strlen(tempString) - 1] = '\0';
-
-            finished = TRUE;
-
+        if (denomination < 0) {
+            printf("Oops! Your coin file contains an invalid line. Check it and try again.");
+            return FALSE;
         }
 
-    } while (!finished);
+        chunk = strtok(line, COIN_DELIM);
+        chunk = strtok(NULL, COIN_DELIM);
+        currentCoin = (int) strtol(token, NULL, 10);
 
-    strcpy(theString, tempString);
-	return TRUE;
+        system->cash_register[i].count = currentCoin;
+        printf("Success! Coins validated and loaded into memory.");
+        denomination -= 1;
+
+    }
+
+    fclose(stockFile);
+    fclose(coinFile);
+    return TRUE;
 }
 
-void system_sort(struct ppd_system * system)
+/**
+ * @param system a pointer to a @ref ppd_system struct that holds all
+ * the data for the system we are creating
+ **/
+BOOLEAN system_init(struct ppd_system * system)
 {
-	struct ppd_node * linkedlist[100];
-	struct ppd_node * curr = system->item_list->head;
-	struct ppd_stock * temp;
-	int i = 0,j = 0;
+    int denomination = 0;
+    void* listMem = malloc(sizeof(struct ppd_list ));
+    void* nodeMem = malloc(sizeof(struct ppd_node));
+    void* stockMem = malloc(sizeof(struct ppd_stock));
 
-	for(i = 0; i < system->item_list->count; i++)
-	{
-		linkedlist[i] = curr;
-		curr = curr->next;
+    for(denomination; denomination < NUM_DENOMS; denomination++) {
+        system->cash_register[i].count = 0;
+        system->cash_register[i].denom = denomination;
+    }
 
-	}
+    system->item_list = listMem;
+    system->item_list->head = nodeMem;
+    system->item_list->head->data = stockMem;
+    system->item_list->head->next = stockMem;
+    system->item_list->count = 0;
 
-	for(i = 0; i < system->item_list->count; i++)
-	{
-		for(j = i + 1;j < system->item_list->count; j++)
-		{
+    /* unsure if needs strcpy or can just assign str value */
+    strcpy(system->item_list->head->data->id, "");
+	strcpy(system->item_list->head->data->name, "");
+	strcpy(system->item_list->head->data->desc, "");
 
-		if( strcmp(linkedlist[i]->data->name,linkedlist[j]->data->name) > 0)
-		{
-		temp = linkedlist[i]->data;
-		linkedlist[i]->data = linkedlist[j]->data;
-		linkedlist[j]->data = temp;
-		}
+	system->item_list->head->data->on_hand = 0;
+	system->item_list->head->data->price.dollars = 0;
+	system->item_list->head->data->price.cents = 0;
 
-		}
+    return TRUE;
+}
 
+/**
+ * @param system a pointer to a @ref ppd_system struct that holds all
+ * the data for the system we are creating
+ **/
+void system_free(struct ppd_system * system)
+{
+    struct ppd_node * prev = system->item_list->head;
+    struct ppd_node * next = system->item_list->head;
 
+    int item = 0;
 
+    /* iterate through item_list and all elements */
+    for (item = 0; item < system->item_list->count; item++)
+    {
+            next = prev->next;
+            free(prev->data);
+            free(prev);
+            prev = next;
+    }
 
-	}
-
-
-
+    /* once all list elements have been freed, free the list as a whole */
+    free(system->item_list);
 }
