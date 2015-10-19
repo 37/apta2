@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #include <stdio.h>
-#include <assert.h>
 #include "ppd_main.h"
 #ifndef PPD_UTILITY
 #define PPD_UTILITY

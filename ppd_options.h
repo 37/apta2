@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #include "ppd_main.h"
+#include <assert.h>
 
 /**
  * @file ppd_options.h declares all functions to implement the menu
