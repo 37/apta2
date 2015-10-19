@@ -33,6 +33,7 @@ void init_menu( struct menu_item * menu) {
         "Abort Program"
     };
 
+    /* function pointers containing all the machine functions */
     BOOLEAN ( *function[MENU_SIZE] )( struct ppd_system * ) = {
         display_items,
         purchase_item,

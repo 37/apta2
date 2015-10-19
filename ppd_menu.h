@@ -10,6 +10,9 @@
  ***********************************************************************/
 
 #include "ppd_main.h"
+#include "ppd_utility.h"
+#include "ppd_options.h"
+
 /**
  * @file ppd_menu.h defines the @ref menu_item type and the init_menu
  * function which you need to call to initialise it
