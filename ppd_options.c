@@ -131,7 +131,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
         "You have chosen: ",
         current->data->name,
         current->data->desc,
-        "This costs: $"
+        "This costs: $",
         itemPrice,
         "Insert the full amount in cents using coin or note denominations.",
         "To cancel this purchase, enter a blank line."
@@ -203,7 +203,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
 				break;
 
             default:
-                printf("Machine error! Please report this to the owner on the side of the vending machine.")
+                printf("Machine error! Please report this to the owner on the side of the vending machine.");
                 break;
 		}
 
@@ -253,7 +253,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
         );
 
         for(denomination = 0; denomination < NUM_DENOMS; denomination++) {
-  	         system->cash_register[denomination].count -= change_system[i].count;
+  	        system->cash_register[denomination].count -= change_system[denomination].count;
         }
 
         /* return denominations to change system */
@@ -335,6 +335,7 @@ BOOLEAN add_item(struct ppd_system * system)
     assert(system->item_list);
 
     /* declare all variables required */
+  	struct ppd_node * previous;
   	struct ppd_node * current;
 	struct ppd_node * new;
 
@@ -350,7 +351,7 @@ BOOLEAN add_item(struct ppd_system * system)
     char itemId[IDLEN + 1],
         itemName[NAMELEN + 1],
         itemDescription[DESCLEN + 1],
-        itemPriceRaw[MAX_PRICE_LEN + 1];
+        itemPriceRaw[PRICELEN + 1];
     char * priceEndPtr;
 
     double itemPrice = 0.0;
@@ -404,7 +405,7 @@ BOOLEAN add_item(struct ppd_system * system)
                     continue;
                 } else {
                     /* convert string input to integer and validate */
-                    itemPrice = strtod(tempString, &priceEndPtr);
+                    itemPrice = strtod(itemPriceRaw, &priceEndPtr);
 
                     if (!itemPrice || itemPrice < 0 ) {
                         printf("Error! This is not a valid price.");
@@ -432,12 +433,6 @@ BOOLEAN add_item(struct ppd_system * system)
     new->data->price.cents = itemCents;
 
     current = system->item_list->head;
-    /* iterate over all items in item_list and shift all elements
-     * down array 1 position
-     */
-  	for(item = 0; item < (system->item_list->count - 1); item++) {
-  	    current = current->next;
-  	}
 
     /* **************************************************************
      * REWORK SORT - based near perfectly off my assessed LAB2 code
@@ -459,8 +454,8 @@ BOOLEAN add_item(struct ppd_system * system)
         /* grab the current pointer and assign it to previous so we
          * can insert data between two nodes
          */
-        prev=current;
-        current=current->next;
+        previous = current;
+        current = current->next;
     }
 
     /* insertion at the beginning of the list */
@@ -475,11 +470,11 @@ BOOLEAN add_item(struct ppd_system * system)
     else if(!current)
     {
         new->next = NULL;
-        prev->next = new;
+        previous->next = new;
     }
     else
     {
-        prev->next = new;
+        previous->next = new;
         new->next = current;
     }
     /* increment the count of items in the list */
@@ -496,7 +491,7 @@ BOOLEAN add_item(struct ppd_system * system)
  * @return true when removing an item succeeds and false when it does not
  **/
 BOOLEAN remove_item(struct ppd_system * system) {
-	BOOLEAN deleted = FALSE;
+	BOOLEAN gotInput = FALSE;
 
 	struct ppd_node * previous = NULL;
     struct ppd_node * current = system->item_list->head;
@@ -523,7 +518,7 @@ BOOLEAN remove_item(struct ppd_system * system) {
                     free(current);
 
                     system->item_list->count--;
-                    printf("Success! Element has been removed from the list.")
+                    printf("Success! Element has been removed from the list.");
                     break;
                 } else {
                     previous = current;

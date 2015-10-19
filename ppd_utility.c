@@ -21,7 +21,7 @@ BOOLEAN getInput(char writeTo[], int max) {
     /* collect user input and validate */
     char itemPriceRaw[max];
 
-    fgets(itemPriceRaw, (MAX_PRICE_LEN + 1), stdin);
+    fgets(itemPriceRaw, (PRICELEN + 1), stdin);
 
     itemPriceLength = strlen(itemPriceRaw) - 1;
     if (itemPriceRaw[itemPriceLength] == '\n'){
@@ -49,13 +49,13 @@ void save_list(struct ppd_system* system, char * data_type) {
         denomination = 0;
 
     /* using IF to split functionality as you can't easily switch a string */
-    if (data_type == 'stock') {
+    if (strcmp(data_type, "stock") == 0) {
+
         /* code */
         double itemPrice = 0.0;
         FILE * openFile = fopen(system->coin_file_name, "w+");
         if (!openFile) {
             printf("Oops! Couldn\'t open the coins list.\n");
-            return FALSE;
         }
 
         for (count = 0; count < system->item_list->count; count++) {
@@ -63,7 +63,7 @@ void save_list(struct ppd_system* system, char * data_type) {
             /* calculate and set itemPrice for item*/
             itemPrice = (double)((current->data->price.dollars * 100) + current->data->price.cents) / 100;
             /* write changes to items file */
-            fprintf(itemsFile, "%s|%s|%s|%.2f|%d\n",
+            fprintf(openFile, "%s|%s|%s|%.2f|%d\n",
                 current->data->id,
                 current->data->name,
                 current->data->desc,
@@ -73,63 +73,62 @@ void save_list(struct ppd_system* system, char * data_type) {
 
             current = current->next;
         }
-    } else if (data_type == 'coins') {
+    } else if (strcmp(data_type, "coins") == 0) {
         /* code */
 
         FILE * openFile = fopen(system->stock_file_name, "w+");
 
         if (!openFile) {
             printf("Oops! Couldn\'t open the coins list.\n");
-            return FALSE;
         }
 
         /* write changes to coins file */
         for(denomination = NUM_DENOMS; denomination >= 0; denomination--) {
             switch(system->cash_register[denomination].denom) {
                 case FIVE_CENTS :
-                    fprintf(coinsFile, "%s%d\n",
+                    fprintf(openFile, "%s%d\n",
                         "5,",
                         system->cash_register[denomination].count
                     );
                     break;
                 case TEN_CENTS :
-                    fprintf(coinsFile, "%s%d\n",
+                    fprintf(openFile, "%s%d\n",
                         "10,",
                         system->cash_register[denomination].count
                     );
                     break;
                 case TWENTY_CENTS :
-                    fprintf(coinsFile, "%s%d\n",
+                    fprintf(openFile, "%s%d\n",
                         "20,",
                         system->cash_register[denomination].count
                     );
                     break;
                 case FIFTY_CENTS :
-                    fprintf(coinsFile, "%s%d\n",
+                    fprintf(openFile, "%s%d\n",
                         "50,",
                         system->cash_register[denomination].count
                     );
                     break;
                 case ONE_DOLLAR :
-                    fprintf(coinsFile, "%s%d\n",
+                    fprintf(openFile, "%s%d\n",
                         "100,",
                         system->cash_register[denomination].count
                     );
                     break;
                 case TWO_DOLLARS :
-                    fprintf(coinsFile,"%s%d\n",
+                    fprintf(openFile,"%s%d\n",
                         "200,",
                         system->cash_register[denomination].count
                     );
                     break;
                 case FIVE_DOLLARS :
-                    fprintf(coinsFile, "%s%d\n",
+                    fprintf(openFile, "%s%d\n",
                         "500,",
                         system->cash_register[denomination].count
                     );
                     break;
                 case TEN_DOLLARS :
-                    fprintf(coinsFile, "%s%d\n",
+                    fprintf(openFile, "%s%d\n",
                         "1000,",
                         system->cash_register[denomination].count
                     );
