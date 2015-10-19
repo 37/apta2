@@ -400,7 +400,7 @@ BOOLEAN add_item(struct ppd_system * system)
                 /* set item price */
                 /* collect user input and validate */
                 printf("Enter a price for this new item in dollars: \n");
-                if(getInput(itemPriceRaw, (MAX_PRICE_LEN + 1)) == FALSE) {
+                if(getInput(itemPriceRaw, (PRICELEN + 1)) == FALSE) {
                     printf("Error adding price");
                     continue;
                 } else {
@@ -459,7 +459,7 @@ BOOLEAN add_item(struct ppd_system * system)
     }
 
     /* insertion at the beginning of the list */
-    if(prev == NULL)
+    if(previous == NULL)
     {
         new->next = system->item_list->head;
         system->item_list->head = new;

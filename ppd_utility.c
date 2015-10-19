@@ -19,13 +19,14 @@
 
 BOOLEAN getInput(char writeTo[], int max) {
     /* collect user input and validate */
-    char itemPriceRaw[max];
+    int inputLength;
+    char inputRaw[max];
 
-    fgets(itemPriceRaw, (PRICELEN + 1), stdin);
+    fgets(inputRaw, max, stdin);
 
-    itemPriceLength = strlen(itemPriceRaw) - 1;
-    if (itemPriceRaw[itemPriceLength] == '\n'){
-        itemPriceRaw[itemPriceLength] = '\0';
+    inputLength = strlen(inputRaw) - 1;
+    if (inputRaw[inputLength] == '\n'){
+        inputRaw[inputLength] = '\0';
     } else {
         return FALSE;
     }
@@ -73,6 +74,7 @@ void save_list(struct ppd_system* system, char * data_type) {
 
             current = current->next;
         }
+        fclose(openFile);
     } else if (strcmp(data_type, "coins") == 0) {
         /* code */
 
@@ -135,6 +137,7 @@ void save_list(struct ppd_system* system, char * data_type) {
                     break;
             }
         }
+        fclose(openFile);
     }
 
     /* changes writte, close file */
@@ -143,8 +146,6 @@ void save_list(struct ppd_system* system, char * data_type) {
         data_type,
         " successfully saved."
     );
-
-    fclose(openFile);
 }
 
 
@@ -200,7 +201,7 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
         printf("successfully opened data files.\n");
     }
 
-    while (fgets(line, LINECHARS , stockFile) {
+    while (fgets(line, LINECHARS , stockFile)) {
 
         /* split and chunk lines by the '|' delimeter */
         chunk = strtok(line, "|");
