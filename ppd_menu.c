@@ -30,7 +30,7 @@ void init_menu( struct menu_item * menu) {
         "Display Coins",
         "Reset Stock",
         "Reset Coins",
-        "Abort Program"
+        "Exit Program"
     };
 
     /* function pointers containing all the machine functions */
@@ -43,7 +43,7 @@ void init_menu( struct menu_item * menu) {
         display_coins,
         reset_stock,
         reset_coins,
-        abort_program
+        exit_program
     };
 
     for(item = 0; item < MENU_SIZE; item++) {

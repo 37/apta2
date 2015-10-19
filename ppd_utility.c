@@ -45,6 +45,13 @@ BOOLEAN getInput(char writeTo[], int max) {
     return TRUE;
 }
 
+BOOLEAN exit_program(struct ppd_system * system)
+{
+	printf("Now exiting program.\n");
+	close_all(system);
+	return TRUE;
+}
+
 void save_list(struct ppd_system* system, char * data_type) {
 
     struct ppd_node * current = system->item_list->head;
@@ -326,7 +333,7 @@ BOOLEAN system_init(struct ppd_system * system)
  * @param system a pointer to a @ref ppd_system struct that holds all
  * the data for the system we are creating
  **/
-void system_free(struct ppd_system * system)
+void close_all(struct ppd_system * system)
 {
     struct ppd_node * prev = system->item_list->head;
     struct ppd_node * next = system->item_list->head;
@@ -336,10 +343,10 @@ void system_free(struct ppd_system * system)
     /* iterate through item_list and all elements */
     for (item = 0; item < system->item_list->count; item++)
     {
-            next = prev->next;
-            free(prev->data);
-            free(prev);
-            prev = next;
+        next = prev->next;
+        free(prev->data);
+        free(prev);
+        prev = next;
     }
 
     /* once all list elements have been freed, free the list as a whole */
