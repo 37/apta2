@@ -96,11 +96,13 @@ BOOLEAN purchase_item(struct ppd_system * system)
   	printf("\n%s\n­­­­­­­­­­", "You have chosen to purchase an item.");
 
   	while (!valid) {
-        if (takeUserInput( selection, (IDLEN + 1), "Select an item by ID: ", "Oops! Invalid input." ) == FALSE) {
+        printf("Enter the ID of the item you want to buy (eg. I0004): \n");
+        if (getInput( selection, (IDLEN + 1)) == FALSE) {
+            printf("Oops! Invalid item.");
             return FALSE;
       	}
 
-        for (item = 0; i < system->item_list->count; item++) {
+        for (item = 0; item < system->item_list->count; item++) {
             /* check item_list for match */
             if ( strcmp(current->data->id, selection) == 0) {
       	       break;
@@ -336,8 +338,7 @@ BOOLEAN add_item(struct ppd_system * system)
   	struct ppd_node * current;
 	struct ppd_node * new;
 
-    int i = 0,
-        step = 0,
+    int step = 0,
         number_of_product_attributes = 4,
         item = 0,
         itemPriceLength,
@@ -596,33 +597,33 @@ BOOLEAN display_coins(struct ppd_system * system)
         "Count"
     );
 
-	for(i = 0; i < NUM_DENOMS; i++)
+	for(denominations = 0; denominations < NUM_DENOMS; denominations++)
 	{
-		switch(system->cash_register[i].denom)
+		switch(system->cash_register[denominations].denom)
 		{
 			case FIVE_CENTS :
-				printf("%-15s|    %-5d\n","5 cents",system->cash_register[i].count);
+				printf("%-15s|    %-5d\n","5 cents",system->cash_register[denominations].count);
 				break;
 			case TEN_CENTS :
-				printf("%-15s |    %-5d\n","10 cents",system->cash_register[i].count);
+				printf("%-15s |    %-5d\n","10 cents",system->cash_register[denominations].count);
 				break;
 			case TWENTY_CENTS :
-				printf("%-15s |    %-5d\n","20 cents",system->cash_register[i].count);
+				printf("%-15s |    %-5d\n","20 cents",system->cash_register[denominations].count);
 				break;
 			case FIFTY_CENTS :
-				printf("%-15s |    %-5d\n","50 cents",system->cash_register[i].count);
+				printf("%-15s |    %-5d\n","50 cents",system->cash_register[denominations].count);
 				break;
 			case ONE_DOLLAR :
-				printf("%-15s |    %-5d\n","1 dollar",system->cash_register[i].count);
+				printf("%-15s |    %-5d\n","1 dollar",system->cash_register[denominations].count);
 				break;
 			case TWO_DOLLARS :
-				printf("%-15s |    %-5d\n","2 dollar",system->cash_register[i].count);
+				printf("%-15s |    %-5d\n","2 dollar",system->cash_register[denominations].count);
 				break;
 			case FIVE_DOLLARS :
-				printf("%-15s |    %-5d\n","5 dollar",system->cash_register[i].count);
+				printf("%-15s |    %-5d\n","5 dollar",system->cash_register[denominations].count);
 				break;
 			case TEN_DOLLARS :
-				printf("%-15s |    %-5d\n","10 dollar",system->cash_register[i].count);
+				printf("%-15s |    %-5d\n","10 dollar",system->cash_register[denominations].count);
 				break;
 		}
 

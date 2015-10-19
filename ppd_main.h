@@ -16,7 +16,7 @@
 #include "menu.h"
 #ifndef PPD_MAIN
 #define PPD_MAIN
-#define MENU_SIZE 9;
+#define MENU_SIZE 9
 
 /**
  * @file ppd_main.h this file holds the rest of the application together.

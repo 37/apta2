@@ -24,8 +24,7 @@
 /**
  * represents a menu item to be displayed and executed in the program
  **/
-struct menu_item
-{
+typedef struct menu_item {
     /**
      * the text to be displayed in the menu
      **/
@@ -34,7 +33,7 @@ struct menu_item
      * pointer to the function to be called when this item is selected
      **/
     BOOLEAN (*function)(struct ppd_system*);
-};
+} menu_item;
 /**
  * In this function you need to initialise the array of menu items
  * according to the text to be displayed for the menu. This array is
