@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     printf("%s%d%s", "Option ", selection, " has been selected.");
 
     /* run each option selected */
-    option = menu[selection].function( &system );
+    option = menu[(selection - 1)].function( &system );
 
     /* until the user quits */
 
