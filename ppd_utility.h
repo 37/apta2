@@ -26,7 +26,6 @@
  * the function to call for buffer clearing. This was discussed extensively
  * for assignment 1
  **/
-void read_rest_of_line(void);
 
 /**
  * function which is called to load the coin and stock data into the
@@ -40,6 +39,14 @@ void read_rest_of_line(void);
  * as an optional extra but it is a central component of this assignment.
  **/
 BOOLEAN load_data(struct ppd_system * , const char * , const char * );
+
+BOOLEAN exit_program(struct ppd_system *);
+
+BOOLEAN getInput(char* , int);
+
+void save_list(struct ppd_system*, char *);
+
+void free_malloc(struct ppd_system*);
 
 /**
  * Initialise the system to a known safe state. Before you post on the

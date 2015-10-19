@@ -16,17 +16,6 @@
  * here is probably a good spot.
  **/
 
-void read_rest_of_line(void)
-{
-    int ch;
-    /* keep retrieving characters from stdin until we
-     * are at the end of the buffer
-     */
-    while(ch = getc(stdin), ch!='\n' && ch != EOF)
-        ;
-    /* reset error flags on stdin */
-    clearerr(stdin);
-}
 
 BOOLEAN getInput(char writeTo[], int max) {
     /* collect user input and validate */
@@ -48,7 +37,7 @@ BOOLEAN getInput(char writeTo[], int max) {
 BOOLEAN exit_program(struct ppd_system * system)
 {
 	printf("Now exiting program.\n");
-	close_all(system);
+	system_free(system);
 	return TRUE;
 }
 
@@ -333,7 +322,7 @@ BOOLEAN system_init(struct ppd_system * system)
  * @param system a pointer to a @ref ppd_system struct that holds all
  * the data for the system we are creating
  **/
-void close_all(struct ppd_system * system)
+void system_free(struct ppd_system * system)
 {
     struct ppd_node * prev = system->item_list->head;
     struct ppd_node * next = system->item_list->head;
