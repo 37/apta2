@@ -49,7 +49,7 @@ void save_list(struct ppd_system*, char *);
 
 void free_malloc(struct ppd_system*);
 
-void reverse(struct coin);
+void reverse(struct coin tempcash_register[]);
 /**
  * Initialise the system to a known safe state. Before you post on the
  * discussion board about this, have a look at the structures as defined
