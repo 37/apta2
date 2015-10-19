@@ -254,7 +254,7 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
         );
 
         current->next = malloc(sizeof(struct ppd_node));
-        current->next->data = malloc(sizeof(struct ppd_stock);
+        current->next->data = malloc(sizeof(struct ppd_stock));
         currentItem += 1;
 		current = current->next;
 		system->item_list->count++;
@@ -272,7 +272,7 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
 
         chunk = strtok(line, COIN_DELIM);
         chunk = strtok(NULL, COIN_DELIM);
-        currentCoin = (int) strtol(token, NULL, 10);
+        currentCoin = (int) strtol(chunk, NULL, 10);
 
         system->cash_register[denomination].count = currentCoin;
         printf("Success! Coins validated and loaded into memory.");
