@@ -33,7 +33,7 @@ void init_menu( struct menu_item * menu) {
         "Abort Program"
     };
 
-    BOOLEAN ( * function[MENU_SIZE] )( struct ppd_system * ) = {
+    BOOLEAN ( *function[MENU_SIZE] )( struct ppd_system * ) = {
         display_items,
         purchase_item,
         save_system,
@@ -45,9 +45,9 @@ void init_menu( struct menu_item * menu) {
         abort_program
     };
 
-    for(item = 0; item < MENU_SIZE; i++) {
+    for(item = 0; item < MENU_SIZE; item++) {
     	strcpy(menu[item].name, menuLabels[item]);
-    	menu[item].function = function[i];
+    	menu[item].function = function[item];
     }
 }
 
@@ -60,7 +60,7 @@ int display_menu( struct menu_item menu[]) {
         inputLength,
         convertedInput;
 
-    char inputString[MAXINT + 2];
+    char inputString[optionLength];
     char * end;
 
     while (!selection || selection == 0) {
@@ -71,7 +71,7 @@ int display_menu( struct menu_item menu[]) {
             "______________________________"
         );
 
-    	for( index = 0; index < NUM_OF_MENUITEMS; index++) {
+    	for( index = 0; index < MENU_SIZE; index++) {
 
     		printf("%d|\t%s\n", (index + 1), menu[index].name);
 
