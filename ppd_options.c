@@ -145,7 +145,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
             valid = FALSE;
   			if(getInteger(&inserted, 4, "", 5, 1000) == FALSE) {
 				printf("\nTransaction cancelled, any input will now be refunded:\n");
-				refund(change_system);
+				reverse(change_system);
 				return FALSE;
   			}
 
@@ -257,7 +257,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
         }
 
         /* return denominations to change system */
-  	    refund(change_system);
+  	    reverse(change_system);
   	}
 
   	printf("You inserted too much m8.\nYour change is: ");

@@ -285,6 +285,63 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
     return TRUE;
 }
 
+void reverse(struct coin tempcash_register[]) {
+
+    int denomination = 0,
+        item = 0;
+    for(denomination = 0; denomination < NUM_DENOMS; denomination++) {
+    	switch(tempcash_register[denomination].denom) {
+    		case TEN_DOLLARS :
+    			for(item = 0; item < tempcash_register[TEN_DOLLARS].count; item++) {
+    				printf("10 Dollars\n");
+    			}
+    			break;
+
+            case FIVE_DOLLARS :
+                for(item = 0; item < tempcash_register[FIVE_DOLLARS].count; item++) {
+                    printf("5 Dollars\n");
+                }
+                break;
+
+            case TWO_DOLLARS :
+    			for(item = 0; item < tempcash_register[TWO_DOLLARS].count; item++) {
+    				printf("2 Dollars\n");
+    			}
+                break;
+
+    		case ONE_DOLLAR :
+    			for(item = 0; item < tempcash_register[ONE_DOLLAR].count; item++) {
+    				printf("1 Dollar\n");
+    			}
+    			break;
+
+    		case FIFTY_CENTS :
+    			for(item = 0; item < tempcash_register[FIFTY_CENTS].count; item++) {
+    				printf("50 Cents\n");
+    			}
+    			break;
+
+            case TWENTY_CENTS :
+                for(item = 0; item < tempcash_register[TWENTY_CENTS].count; item++) {
+                    printf("20 Cents\n");
+                }
+                break;
+
+    		case TEN_CENTS :
+    			for(item = 0; item < tempcash_register[TEN_CENTS].count; item++) {
+    				printf("10 Cents\n");
+    			}
+    			break;
+
+    		case FIVE_CENTS :
+    			for(item = 0; item < tempcash_register[FIVE_CENTS].count; item++) {
+    				printf("5 Cents\n");
+    			}
+    			break;
+    	}
+    }
+}
+
 /**
  * @param system a pointer to a @ref ppd_system struct that holds all
  * the data for the system we are creating

@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #include <stdio.h>
+#include <assert.h>
 #include "ppd_main.h"
-#include "ppd_stock.h"
 #ifndef PPD_UTILITY
 #define PPD_UTILITY
 /**
@@ -49,6 +49,7 @@ void save_list(struct ppd_system*, char *);
 
 void free_malloc(struct ppd_system*);
 
+void reverse(struct coin);
 /**
  * Initialise the system to a known safe state. Before you post on the
  * discussion board about this, have a look at the structures as defined
