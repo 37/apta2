@@ -215,7 +215,7 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
     				strcpy(current->data->id, chunk);
     				break;
 
-    			case name:
+    			case title:
     				strcpy(current->data->name, chunk);
     				break;
 
@@ -228,8 +228,9 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
     				itemPriceCents = strtod (chunk, NULL);
     				itemPriceCents = fmod((itemPriceCents * 100), 100);
     				itemPriceCents -= fmod(itemPriceCents, 5);
-    				current->data->price.dollars = priceDollars;
-    				current->data->price.cents = priceCents;
+
+    				current->data->price.dollars = itemPriceDollars;
+    				current->data->price.cents = itemPriceCents;
     				break;
 
     			case onHand:
@@ -237,13 +238,13 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
     				break;
 			}
 
-    		token = strtok(NULL, STOCK_DELIM);
+    		chunk = strtok(NULL, "|");
     		product_object_step += 1;
 
 		}
 
         printf("item %d: %s %s %s %d %d %d\n",
-            itemNo,
+            currentItem,
             current->data->id,
             current->data->name,
             current->data->desc,
@@ -252,9 +253,9 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
             current->data->on_hand
         );
 
-        current->next = malloc(sizeof(struct ppd_node)),
-        current->next->data = malloc(sizeof(struct ppd_stock)
-        itemNo += 1;
+        current->next = malloc(sizeof(struct ppd_node));
+        current->next->data = malloc(sizeof(struct ppd_stock);
+        currentItem += 1;
 		current = current->next;
 		system->item_list->count++;
 
@@ -262,7 +263,7 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
 
     printf("\n Success! Stock has been validated and loaded into memory.");
 
-    while(fgets(line, COINLEN + 1, coins)) {
+    while(fgets(line, COINLEN + 1, coinFile)) {
 
         if (denomination < 0) {
             printf("Oops! Your coin file contains an invalid line. Check it and try again.");
@@ -273,7 +274,7 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
         chunk = strtok(NULL, COIN_DELIM);
         currentCoin = (int) strtol(token, NULL, 10);
 
-        system->cash_register[i].count = currentCoin;
+        system->cash_register[denomination].count = currentCoin;
         printf("Success! Coins validated and loaded into memory.");
         denomination -= 1;
 
@@ -296,8 +297,8 @@ BOOLEAN system_init(struct ppd_system * system)
     void* stockMem = malloc(sizeof(struct ppd_stock));
 
     for(denomination; denomination < NUM_DENOMS; denomination++) {
-        system->cash_register[i].count = 0;
-        system->cash_register[i].denom = denomination;
+        system->cash_register[denomination].count = 0;
+        system->cash_register[denomination].denom = denomination;
     }
 
     system->item_list = listMem;
