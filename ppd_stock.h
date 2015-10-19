@@ -185,7 +185,7 @@ typedef enum ppd_item_attr {
   	price = 3,
 
   	onHand = 4
-} item_attr;
+} ppd_item_attr;
 
 
 

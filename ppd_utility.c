@@ -31,7 +31,7 @@ BOOLEAN getInput(char writeTo[], int max) {
         return FALSE;
     }
 
-    strcpy(writeTo, itemPriceRaw);
+    strcpy(writeTo, inputRaw);
     return TRUE;
 }
 
