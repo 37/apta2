@@ -381,14 +381,15 @@ BOOLEAN add_item(struct ppd_system * system) {
 
     /* GET ALL THE DATA FROM USER, LOOP ON ERRORS */
     while (step < number_of_product_attributes) {
+        printf("%s%d%s\n", "Product creation step ", (step + 1), ":");
         switch (step) {
-            case 0:
+            case 0 :
                 /* set item ID */
                 sprintf(itemId, "%s%04d", "I", (system->item_list->count + 1));
                 step += 1;
                 break;
 
-            case 1:
+            case 1 :
                 /* set item name */
                 printf("Enter a name for this new item: \n");
                 if(getInput(itemName, (NAMELEN + 1)) == FALSE) {
@@ -399,7 +400,7 @@ BOOLEAN add_item(struct ppd_system * system) {
                 }
                 break;
 
-            case 2:
+            case 2 :
                 /* set item description */
                 printf("Enter a description for this new item: \n");
                 if(getInput(itemDescription, (DESCLEN + 1)) == FALSE) {
@@ -410,7 +411,7 @@ BOOLEAN add_item(struct ppd_system * system) {
                 }
                 break;
 
-            case 3:
+            case 3 :
                 /* set item price */
                 /* collect user input and validate */
                 printf("Enter a price for this new item in dollars: \n");
