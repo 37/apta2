@@ -451,6 +451,12 @@ BOOLEAN add_item(struct ppd_system * system) {
 
     current = system->item_list->head;
 
+    printf("%s%s\n", "New name is: ", new->data->name);
+    printf("%s%s\n", "New desc is: ", new->data->desc);
+
+    printf("%s%s\n", "Current name is: ", system->item_list->head->data->name);
+    printf("%s%s\n", "Current desc is: ", system->item_list->head->data->desc);
+
     printf("Flag 1\n");
     /* **************************************************************
      * REWORK SORT - based near perfectly off my assessed LAB2 code
