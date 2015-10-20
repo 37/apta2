@@ -207,10 +207,6 @@ BOOLEAN purchase_item(struct ppd_system * system)
                 /* $10 inserted */
 				change_system[7].count += 1;
 				break;
-
-            default:
-                printf("Machine error! Please report this to the owner on the side of the vending machine.");
-                break;
 		}
 
 		itemPrice = ((itemPrice * 100) - inserted) / 100;
