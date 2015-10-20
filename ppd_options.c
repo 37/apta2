@@ -457,6 +457,11 @@ BOOLEAN add_item(struct ppd_system * system) {
     printf("%s%s\n", "Current name is: ", system->item_list->head->data->name);
     printf("%s%s\n", "Current desc is: ", system->item_list->head->data->desc);
 
+    printf("%s%s\n", "Next name is: ", system->item_list->head->next->data->name);
+    printf("%s%s\n", "Next desc is: ", system->item_list->head->next->data->desc);
+
+
+
     printf("Flag 1\n");
     /* **************************************************************
      * REWORK SORT - based near perfectly off my assessed LAB2 code
@@ -479,9 +484,9 @@ BOOLEAN add_item(struct ppd_system * system) {
         /* grab the current pointer and assign it to previous so we
          * can insert data between two nodes
          */
+        printf("Iterating.\n");
         previous = current;
         current = current->next;
-        printf("Iterating.\n");
     }
 
     printf("Flag 3\n");
