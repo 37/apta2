@@ -340,8 +340,7 @@ BOOLEAN save_system(struct ppd_system * system) {
  * all the information for managing the system.
  * @return true when adding an item succeeds and false when it does not
  **/
-BOOLEAN add_item(struct ppd_system * system)
-{
+BOOLEAN add_item(struct ppd_system * system) {
 
   	BOOLEAN valid = FALSE;
 
@@ -386,6 +385,7 @@ BOOLEAN add_item(struct ppd_system * system)
             case 0:
                 /* set item ID */
                 sprintf(itemId, "%s%04d", "I", (system->item_list->count + 1));
+                step += 1;
                 break;
 
             case 1:
