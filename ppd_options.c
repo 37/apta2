@@ -31,8 +31,8 @@ BOOLEAN display_items(struct ppd_system * system) {
     struct ppd_node * current = system->item_list->head;
     double price = 0.0;
     int item = 0;
-
-  	printf("\e[1;1H\e[2J\n%s\n%s\n%s\n",
+    /*printf("\e[1;1H\e[2J"); */
+  	printf("\n%s\n%s\n%s\n",
         "Display Items: ",
         "Items Menu",
         "----------"
