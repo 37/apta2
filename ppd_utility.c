@@ -146,11 +146,7 @@ void save_list(struct ppd_system* system, char * data_type) {
 
     printf("Flag8\n");
     /* changes writte, close file */
-    printf("%s%s%s\n",
-        "List for ",
-        data_type,
-        " successfully saved."
-    );
+    printf( "List successfully saved." );
 }
 
 
