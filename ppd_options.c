@@ -522,10 +522,10 @@ BOOLEAN remove_item(struct ppd_system * system) {
 
     printf("\n%s\n", "Remove Item: ");
 
-	while (!gotInput) {
+	while (gotInput == FALSE) {
 
         printf("Enter the ID of the item you want to delete (eg. I0004): \n");
-        if (getInput( delete, IDLEN + 1) == FALSE) {
+        if (getInput( delete, IDLEN + 2) == FALSE) {
             return FALSE;
         } else {
             gotInput = TRUE;
