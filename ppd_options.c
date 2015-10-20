@@ -96,7 +96,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
   	printf("\n%s\n­­­­­­­­­­", "You have chosen to purchase an item.");
 
   	while (!valid) {
-        printf("%s\n", "Enter the ID of the item you want to buy (eg. I0004): ");
+        printf("\n%s\n", "Enter the ID of the item you want to buy (eg. I0004): ");
         if (getInput( selection, (IDLEN + 1)) == FALSE) {
             printf("Oops! Invalid item.");
             return FALSE;
@@ -104,6 +104,8 @@ BOOLEAN purchase_item(struct ppd_system * system)
 
         for (item = 0; item < system->item_list->count; item++) {
             /* check item_list for match */
+            printf("%s\n", current->data->id);
+            
             if ( strcmp(current->data->id, selection) == 0) {
       	       break;
             }
