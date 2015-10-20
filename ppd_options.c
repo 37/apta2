@@ -441,6 +441,7 @@ BOOLEAN add_item(struct ppd_system * system) {
     printf("New object created.\n");
 
     /* populate new list item */
+
     new->next = NULL;
     strcpy(new->data->id, itemId);
     strcpy(new->data->name, itemName);
@@ -449,6 +450,7 @@ BOOLEAN add_item(struct ppd_system * system) {
     new->data->price.dollars = itemDollars;
     new->data->price.cents = itemCents;
 
+    previous = NULL;
     current = system->item_list->head;
 
     printf("%s%s\n", "New name is: ", new->data->name);
