@@ -381,7 +381,7 @@ BOOLEAN add_item(struct ppd_system * system) {
 
     /* GET ALL THE DATA FROM USER, LOOP ON ERRORS */
     while (step < number_of_product_attributes) {
-        printf("%s%d%s\n", "Product creation step ", (step + 1), ":");
+        if (step > 0) { printf("\n\n%s%d%s\n", "Product creation step ", step, ":"); }
         switch (step) {
             case 0 :
                 /* set item ID */
@@ -439,7 +439,7 @@ BOOLEAN add_item(struct ppd_system * system) {
     }
 
     printf("New object created.\n");
-    
+
     /* populate new list item */
     new->next = NULL;
     strcpy(new->data->id, itemId);
@@ -451,19 +451,21 @@ BOOLEAN add_item(struct ppd_system * system) {
 
     current = system->item_list->head;
 
+    printf("Flag 1\n");
     /* **************************************************************
      * REWORK SORT - based near perfectly off my assessed LAB2 code
      * if we are at the begging of the list just assign the new node
      * to the head of the list */
 
-    if(system->item_list->head == NULL)
-    {
+    if(system->item_list->head == NULL) {
         system->item_list->head = new;
         /* increment the count of items in the list */
         system->item_list->count += 1;
         /* job done */
         return TRUE;
     }
+
+    printf("Flag 2\n");
     /* grab the beginning of the list and find the insertion point
      * for our data. */
     current = system->item_list->head;
@@ -475,29 +477,32 @@ BOOLEAN add_item(struct ppd_system * system) {
         current = current->next;
     }
 
+    printf("Flag 3\n");
     /* insertion at the beginning of the list */
-    if(previous == NULL)
-    {
+    if(previous == NULL) {
         new->next = system->item_list->head;
         system->item_list->head = new;
     }
+
+    printf("Flag 4\n");
     /* insertion at the end - redundant if statement because of the
      * else statement further on
      **/
-    else if(!current)
-    {
+    else if(!current) {
         new->next = NULL;
         previous->next = new;
-    }
-    else
-    {
+    } else {
         previous->next = new;
         new->next = current;
     }
+
+    printf("Flag 5\n");
     /* increment the count of items in the list */
     system->item_list->count += 1;
 
     /* done */
+
+    printf("Flag 6\n");
     printf("Success! The new element was added into the list in sorted order.\n");
     return TRUE;
 }
