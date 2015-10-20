@@ -39,8 +39,8 @@ BOOLEAN exit_program(struct ppd_system * system)
 {
 	printf("Now exiting program.\n");
 	system_free(system);
-    exit( SUCCESS );
-	return TRUE;
+    exit(0);
+	return FALSE;
 }
 
 void save_list(struct ppd_system* system, int data_type) {
