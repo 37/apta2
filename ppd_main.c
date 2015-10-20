@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     /* represents the data structures to manage the system */
     struct ppd_system system;
     int selection = 0;
-    BOOLEAN option = FALSE;
+    BOOLEAN running = TRUE;
 
     /* init the system */
     system.stock_file_name = argv[1];
@@ -56,14 +56,19 @@ int main(int argc, char **argv)
     menu_item menu[MENU_SIZE];
     init_menu(menu);
 
-    /* loop, asking for options from the menu */
-    selection = display_menu(menu);
-    printf("%s%d%s", "Option ", selection, " has been selected.");
+    while (running) {
+        /* loop, asking for options from the menu */
+        selection = display_menu(menu);
+        printf("%s%d%s", "Option ", selection, " has been selected.");
 
-    /* run each option selected */
-    option = menu[(selection - 1)].function( &system );
+        /* run each option selected */
+        if(menu[(selection - 1)].function( &system ) == FALSE) {
+            printf("\e[1;1H\e[2J\n%s\n", "Sorry! Something went wrong. Now exiting.");
+        }
 
-    /* until the user quits */
+    }
+
+    /* User has opted to quit */
 
     /* make sure you always free all memory and close all files
      * before you exit the program

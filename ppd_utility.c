@@ -261,21 +261,19 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
 
     }
 
-    printf("\n Success! Stock has been validated and loaded into memory.");
+    printf("\n%s\n", "Success! Stock has been validated and loaded into memory.");
 
     while(fgets(line, COINLEN + 1, coinFile)) {
 
         if (denomination < 0) {
-            printf("Oops! Your coin file contains an invalid line. Check it and try again.");
+            printf("%s\n", "Oops! Your coin file contains an invalid line. Check it and try again.");
             return FALSE;
         }
 
         chunk = strtok(line, COIN_DELIM);
         chunk = strtok(NULL, COIN_DELIM);
         currentCoin = (int) strtol(chunk, NULL, 10);
-
         system->cash_register[denomination].count = currentCoin;
-        printf("Success! Coins validated and loaded into memory.");
         denomination -= 1;
 
     }
