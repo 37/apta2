@@ -438,6 +438,8 @@ BOOLEAN add_item(struct ppd_system * system) {
         }
     }
 
+    printf("New object created.\n");
+    
     /* populate new list item */
     new->next = NULL;
     strcpy(new->data->id, itemId);
