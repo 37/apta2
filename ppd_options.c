@@ -43,7 +43,7 @@ BOOLEAN display_items(struct ppd_system * system) {
         "Name",
         "Available",
         "Price",
-        "----------------------------------------"
+        "-----------------------------------------------"
     );
 
   	for(item = 0; item < system->item_list->count; item++) {
