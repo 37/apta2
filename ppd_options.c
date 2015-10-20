@@ -324,8 +324,8 @@ BOOLEAN save_system(struct ppd_system * system) {
     int stock = 1;
     int coins = 2;
 
-    save_list(system, stock);
-    save_list(system, coins);
+    save_list(system, 1);
+    save_list(system, 2);
 
     printf("\n%s\n","Lists saved.");
     free_malloc(system);

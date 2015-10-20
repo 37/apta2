@@ -51,11 +51,12 @@ int main(int argc, char **argv)
 
     /* load data from .dat files */
     load_data(&system, system.coin_file_name, system.stock_file_name);
-
+    printf("Files loaded.\n");
     /* initialise the menu system */
     menu_item menu[MENU_SIZE];
     init_menu(menu);
 
+    printf("Menu initialised.\n");
     while (running) {
         /* loop, asking for options from the menu */
         selection = display_menu(menu);
