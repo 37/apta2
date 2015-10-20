@@ -44,7 +44,7 @@ BOOLEAN exit_program(struct ppd_system *);
 
 BOOLEAN getInput(char* , int);
 
-void save_list(struct ppd_system*, char *);
+void save_list(struct ppd_system*, int);
 
 void free_malloc(struct ppd_system*);
 
