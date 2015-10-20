@@ -83,7 +83,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
         cashOnHand = 0,
         totalMoney = 0;
 
-  	char selection[IDLEN + 1]
+  	char selection[IDLEN + 1],
         coinString[PRICELEN + 2],
         * end;
 
