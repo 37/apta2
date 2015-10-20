@@ -152,10 +152,12 @@ BOOLEAN purchase_item(struct ppd_system * system)
 		printf("%s %.2f. \n", "You still need to give us $", itemPrice);
 		while(valid == FALSE) {
             valid = FALSE;
+            /* get user input on coins / note */
             if (getInput( coinString, (PRICELEN + 2)) == FALSE) {
                 printf("\nTransaction cancelled, any input will now be refunded:\n");
 				reverse(change_system);
           	} else {
+                /* returned input is string, convert to int */
                 inserted = (int) strtol(coinString, &end, 10);
                 printf("%s%d\n", "You entered: ", inserted);
             }
