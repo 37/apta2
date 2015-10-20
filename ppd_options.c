@@ -453,18 +453,6 @@ BOOLEAN add_item(struct ppd_system * system) {
     previous = NULL;
     current = system->item_list->head;
 
-    printf("%s%s\n", "New name is: ", new->data->name);
-    printf("%s%s\n", "New desc is: ", new->data->desc);
-
-    printf("%s%s\n", "Current name is: ", system->item_list->head->data->name);
-    printf("%s%s\n", "Current desc is: ", system->item_list->head->data->desc);
-
-    printf("%s%s\n", "Next name is: ", system->item_list->head->next->data->name);
-    printf("%s%s\n", "Next desc is: ", system->item_list->head->next->data->desc);
-
-
-
-    printf("Flag 1\n");
     /* **************************************************************
      * REWORK SORT - based near perfectly off my assessed LAB2 code
      * if we are at the begging of the list just assign the new node
@@ -478,7 +466,6 @@ BOOLEAN add_item(struct ppd_system * system) {
         return TRUE;
     }
 
-    printf("Flag 2\n");
     /* grab the beginning of the list and find the insertion point
      * for our data. */
     current = system->item_list->head;
@@ -486,40 +473,34 @@ BOOLEAN add_item(struct ppd_system * system) {
         /* grab the current pointer and assign it to previous so we
          * can insert data between two nodes
          */
-        printf("Iterating.\n");
+
         previous = current;
         current = current->next;
     }
 
-    printf("Flag 3\n");
-
     /* insertion at the beginning of the list */
     if(!previous) {
-        printf("Flag x\n");
+
         new->next = system->item_list->head;
         system->item_list->head = new;
     } else if (!current) {
         /* insertion at the end - redundant if statement because of the
          * else statement further on
          **/
-        new->next = NULL;
+        new->next = 1
+        ;
         previous->next = new;
     } else {
-        printf("Flag 4\n");
-        printf("%s%s\n", "Previous name is: ", previous->data->name);
-        printf("%s%s\n", "Current name is: ", previous->data->name);
-        printf("%s%s\n", "New name is: ", new->data->name);
         previous->next = new;
         new->next = current;
     }
 
-    printf("Flag 5\n");
+
     /* increment the count of items in the list */
     system->item_list->count += 1;
 
     /* done */
 
-    printf("Flag 6\n");
     printf("Success! The new element was added into the list in sorted order.\n");
     return TRUE;
 }
@@ -548,16 +529,19 @@ BOOLEAN remove_item(struct ppd_system * system) {
             return FALSE;
         } else {
             gotInput = TRUE;
+            printf("%s\n", "received input successfully");
             /* Input received, to test now */
             for (item = 0; item < system->item_list->count; item++) {
+                printf("%s\n", "Searching elements..");
                 /* check if match found between current and element for deletion */
                 if ( strcmp(current->data->id, delete) == 0) {
+                    printf("%s\n", "Found matching product.");
                     previous->next = current->next;
                     free(current->data);
                     free(current);
 
                     system->item_list->count--;
-                    printf("Success! Element has been removed from the list.");
+                    printf("Success! Element has been removed from the list.\n");
                     break;
                 } else {
                     previous = current;
@@ -566,10 +550,10 @@ BOOLEAN remove_item(struct ppd_system * system) {
             }
 
             /* If we have iterated to the end of the list */
+            printf("%s\n", "Reached end of file with no matches.");
             if (item == system->item_list->count) {
                 current = system->item_list->head;
                 printf("\nitem not found\n");
-                continue;
             }
         }
 	}
