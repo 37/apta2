@@ -99,10 +99,13 @@ BOOLEAN purchase_item(struct ppd_system * system)
         if (display_items(system)){
             printf("\n%s\n", "Enter the ID of the item you want to buy (eg. I0004): ");
         }
+
         if (getInput( selection, (IDLEN + 1)) == FALSE) {
             printf("Oops! Invalid item.");
             return FALSE;
-      	}
+      	} else {
+            printf("%s%s\n", "You entered: ", selection);
+        }
 
         for (item = 0; item < system->item_list->count; item++) {
             /* check item_list for match */
