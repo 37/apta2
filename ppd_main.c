@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     system.stock_file_name = argv[1];
     system.coin_file_name = argv[2];
     system_init(&system);
-    printf("System initialised. Please wait.");
+    printf("System initialised. Please wait.\n");
 
     /* load data from .dat files */
     load_data(&system, system.coin_file_name, system.stock_file_name);
