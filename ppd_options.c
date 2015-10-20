@@ -536,7 +536,18 @@ BOOLEAN remove_item(struct ppd_system * system) {
                 /* check if match found between current and element for deletion */
                 if ( strcmp(current->data->id, delete) == 0) {
                     printf("%s\n", "Found matching product.");
-                    previous->next = current->next;
+
+                    if(!previous) {
+                        system->item_list->head = current->next;
+                    } else if (!current) {
+                        /* insertion at the end - redundant if statement because of the
+                         * else statement further on
+                         **/
+                        previous->next = NULL;
+                    } else {
+                        previous->next = current->next;
+                    }
+
                     free(current->data);
                     free(current);
 
