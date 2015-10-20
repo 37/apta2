@@ -478,18 +478,23 @@ BOOLEAN add_item(struct ppd_system * system) {
     }
 
     printf("Flag 3\n");
+
     /* insertion at the beginning of the list */
     if(previous == NULL) {
+        printf("Flag x\n");
         new->next = system->item_list->head;
         system->item_list->head = new;
     } else if (!current) {
         /* insertion at the end - redundant if statement because of the
          * else statement further on
          **/
-        printf("Flag 4\n");
         new->next = NULL;
         previous->next = new;
     } else {
+        printf("Flag 4\n");
+        printf("%s%s\n", "Previous name is: ", previous->data->name);
+        printf("%s%s\n", "Current name is: ", previous->data->name);
+        printf("%s%s\n", "New name is: ", new->data->name);
         previous->next = new;
         new->next = current;
     }
