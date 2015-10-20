@@ -559,13 +559,6 @@ BOOLEAN remove_item(struct ppd_system * system) {
                     current = current->next;
                 }
             }
-
-            /* If we have iterated to the end of the list */
-            printf("%s\n", "Reached end of file with no matches.");
-            if (item == system->item_list->count) {
-                current = system->item_list->head;
-                printf("\nitem not found\n");
-            }
         }
 	}
 
