@@ -44,6 +44,7 @@ BOOLEAN exit_program(struct ppd_system * system)
 
 void save_list(struct ppd_system* system, char * data_type) {
 
+    printf("%s\n", "saving list..");
     struct ppd_node * current = system->item_list->head;
 
     int count = 0,

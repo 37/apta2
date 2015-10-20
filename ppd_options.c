@@ -318,12 +318,13 @@ BOOLEAN purchase_item(struct ppd_system * system)
  * all the information for managing the system.
  * @return true when a save succeeds and false when it does not
  **/
-BOOLEAN save_system(struct ppd_system * system)
-{
+BOOLEAN save_system(struct ppd_system * system) {
     printf("\n%s\n", "Save and Exit: ");
 
     save_list(system, 'stock');
     save_list(system, 'coins');
+
+    printf("\n%s\n","Lists saved.");
     free_malloc(system);
 
     printf("\n%s\n", "Success! Saved and exiting.");
