@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 
         /* run each option selected */
         if(menu[(selection - 1)].function( &system ) == FALSE) {
-            printf("\e[1;1H\e[2J\n%s\n", "Sorry! Something went wrong. Now exiting.");
+            printf("\n\n%s\n", "Sorry! Something went wrong. Now exiting.");
             running = FALSE;
         }
 
