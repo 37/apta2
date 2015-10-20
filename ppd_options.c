@@ -482,13 +482,11 @@ BOOLEAN add_item(struct ppd_system * system) {
     if(previous == NULL) {
         new->next = system->item_list->head;
         system->item_list->head = new;
-    }
-
-    printf("Flag 4\n");
-    /* insertion at the end - redundant if statement because of the
-     * else statement further on
-     **/
-    else if(!current) {
+    } else if (!current) {
+        /* insertion at the end - redundant if statement because of the
+         * else statement further on
+         **/
+        printf("Flag 4\n");
         new->next = NULL;
         previous->next = new;
     } else {
