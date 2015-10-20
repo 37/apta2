@@ -492,7 +492,7 @@ BOOLEAN add_item(struct ppd_system * system) {
     printf("Flag 3\n");
 
     /* insertion at the beginning of the list */
-    if(previous == NULL) {
+    if(!previous) {
         printf("Flag x\n");
         new->next = system->item_list->head;
         system->item_list->head = new;
