@@ -83,7 +83,10 @@ BOOLEAN purchase_item(struct ppd_system * system)
         cashOnHand = 0,
         totalMoney = 0;
 
-  	char selection[IDLEN + 1];
+  	char selection[IDLEN + 1]
+        coinString[PRICELEN + 2],
+        * end;
+
   	double itemPrice = 0.0;
 
     /* initialise change system */
@@ -146,14 +149,16 @@ BOOLEAN purchase_item(struct ppd_system * system)
   	valid = FALSE;
 
   	while (itemPrice > 0) {
-		printf("%s %.2f: ", "You still need to give us $", itemPrice);
+		printf("%s %.2f. \n", "You still need to give us $", itemPrice);
 		while(valid = FALSE) {
             valid = FALSE;
-  			if(getInteger(&inserted, 4, "", 5, 1000) == FALSE) {
-				printf("\nTransaction cancelled, any input will now be refunded:\n");
+            if (getInput( coinString, (PRICELEN + 2)) == FALSE) {
+                printf("\nTransaction cancelled, any input will now be refunded:\n");
 				reverse(change_system);
-				return FALSE;
-  			}
+          	} else {
+                inserted = (int) strtol(coinString, &end, 10);
+                printf("%s%d\n", "You entered: ", inserted);
+            }
 
   			if(inserted != 5 && inserted != 10 && inserted != 20 && inserted != 50 && inserted != 100 && inserted != 200 && inserted != 500 && inserted != 1000) {
   				printf("%s%d%s\n",
@@ -166,6 +171,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
                 valid = TRUE;
             }
 		}
+        printf("%s\n", "This is a valid denomination.");
 
 		switch(inserted) {
   			case 5 :
