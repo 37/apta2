@@ -150,7 +150,7 @@ BOOLEAN purchase_item(struct ppd_system * system)
 
   	while (itemPrice > 0) {
 		printf("%s %.2f. \n", "You still need to give us $", itemPrice);
-		while(valid = FALSE) {
+		while(valid == FALSE) {
             valid = FALSE;
             if (getInput( coinString, (PRICELEN + 2)) == FALSE) {
                 printf("\nTransaction cancelled, any input will now be refunded:\n");
