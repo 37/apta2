@@ -475,6 +475,7 @@ BOOLEAN add_item(struct ppd_system * system) {
          */
         previous = current;
         current = current->next;
+        printf("Iterating.\n");
     }
 
     printf("Flag 3\n");
