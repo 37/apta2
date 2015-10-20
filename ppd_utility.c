@@ -42,7 +42,7 @@ BOOLEAN exit_program(struct ppd_system * system)
 	return TRUE;
 }
 
-void save_list(struct ppd_system* system, int data_type) {
+void save_list(struct ppd_system* system, char * data_type) {
 
     printf("%s\n", "saving list..");
     struct ppd_node * current = system->item_list->head;
@@ -51,7 +51,7 @@ void save_list(struct ppd_system* system, int data_type) {
         denomination = 0;
     printf("Flag1\n");
     /* using IF to split functionality as you can't easily switch a string */
-    if (data_type == 1) {
+    if (strcmp(data_type, "stock") == 0) {
         printf("Flag2\n");
         /* code */
         double itemPrice = 0.0;
@@ -146,7 +146,11 @@ void save_list(struct ppd_system* system, int data_type) {
 
     printf("Flag8\n");
     /* changes writte, close file */
-    printf( "List successfully saved." );
+    printf("%s%s%s\n",
+        "List for ",
+        data_type,
+        " successfully saved."
+    );
 }
 
 

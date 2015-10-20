@@ -321,11 +321,8 @@ BOOLEAN purchase_item(struct ppd_system * system)
 BOOLEAN save_system(struct ppd_system * system) {
     printf("\n%s\n", "Save and Exit: ");
 
-    int stock = 1;
-    int coins = 2;
-
-    save_list(system, stock);
-    save_list(system, coins);
+    save_list(system, 'stock');
+    save_list(system, 'coins');
 
     printf("\n%s\n","Lists saved.");
     free_malloc(system);
