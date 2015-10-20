@@ -146,7 +146,7 @@ void save_list(struct ppd_system* system, int data_type) {
 
     printf("Flag8\n");
     /* changes writte, close file */
-    printf("List saved.");
+    printf("%s%d%s\n" "List ", data_type);
 }
 
 
@@ -271,9 +271,13 @@ BOOLEAN load_data(struct ppd_system * system, const char * coins_name, const cha
             return FALSE;
         }
 
+        printf("flag1");
         chunk = strtok(line, COIN_DELIM);
         chunk = strtok(NULL, COIN_DELIM);
+
+        printf("flag2");
         currentCoin = (int) strtol(chunk, NULL, 10);
+
         system->cash_register[denomination].count = currentCoin;
         denomination -= 1;
 
