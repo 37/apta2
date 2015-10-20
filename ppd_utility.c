@@ -49,19 +49,20 @@ void save_list(struct ppd_system* system, char * data_type) {
 
     int count = 0,
         denomination = 0;
-
+    printf("Flag1\n");
     /* using IF to split functionality as you can't easily switch a string */
     if (strcmp(data_type, "stock") == 0) {
-
+        printf("Flag2\n");
         /* code */
         double itemPrice = 0.0;
         FILE * openFile = fopen(system->coin_file_name, "w+");
+        printf("Flag3\n");
         if (!openFile) {
             printf("Oops! Couldn\'t open the coins list.\n");
         }
 
         for (count = 0; count < system->item_list->count; count++) {
-
+            printf("Flag4\n");
             /* calculate and set itemPrice for item*/
             itemPrice = (double)((current->data->price.dollars * 100) + current->data->price.cents) / 100;
             /* write changes to items file */
@@ -72,10 +73,12 @@ void save_list(struct ppd_system* system, char * data_type) {
                 itemPrice,
                 current->data->on_hand
             );
-
+            printf("Flag5\n");
             current = current->next;
         }
+
         fclose(openFile);
+        printf("Flag6\n");
     } else if (strcmp(data_type, "coins") == 0) {
         /* code */
 
@@ -141,6 +144,7 @@ void save_list(struct ppd_system* system, char * data_type) {
         fclose(openFile);
     }
 
+    printf("Flag8\n");
     /* changes writte, close file */
     printf("%s%s%s\n",
         "List for ",

@@ -25,8 +25,8 @@ archive:
 	zip $(USER)-a2 $(SOURCES) $(HEADERS) $(README) $(MAKEFILE)
 
 all:
-	gcc -ansi -pedantic -Wall -g -c $(SOURCES)
-	gcc -ansi -pedantic -Wall -g -lm -o ppd $(OBJ)
+	gcc -ansi -pedantic -Wall -c $(SOURCES)
+	gcc -ansi -pedantic -Wall -lm -o ppd $(OBJ)
 
 clean:
 	rm *.o *.exe
